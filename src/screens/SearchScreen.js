@@ -4,6 +4,7 @@ import { View, Text, TextInput, StyleSheet, TouchableOpacity, FlatList } from 'r
 import { LinearGradient } from 'expo-linear-gradient';
 import Icon from 'react-native-vector-icons/Feather'
 import Styles, { ViewStyle, TextStyle } from '../Styles'
+import searchCities from '../api/CityAPI'
 
 export default function SearchScreen() {
     const [input, setInput] = useState('');
@@ -18,7 +19,7 @@ export default function SearchScreen() {
                 <TextInput
                     style={styles.input}
                     placeholder='New York'
-                    onChangeText={text => setInput(text)}
+                    onChangeText={text => searchCities(text, this, fetchCityCallback)}
                 />
                 <View style={styles.underLine} />
             </View>
@@ -45,7 +46,6 @@ function cityCard(props) {
                     size={25}
                     style={cityCardStyles.chevron}
                 />
-
                 <View style={cityCardStyles.cityName}>
                     <Text style={TextStyle.medium}>{props.name}</Text>
                 </View>
@@ -54,6 +54,13 @@ function cityCard(props) {
     )
 
 }
+
+function fetchCityCallback(success, context, cityResults) {
+    // if (success === true) {
+    //     context.setCities(cityResults.names)
+    // }
+}
+
 const cityCardStyles = StyleSheet.create({
     cityName: {
         flexDirection: 'row',
