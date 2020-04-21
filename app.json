@@ -1,0 +1,17 @@
+{
+  "name": "ReactNativeWeatherApp",
+  "displayName": "ReactNativeWeatherApp",
+  "expo": {
+    "name": "ReactNativeWeatherApp",
+    "slug": "ReactNativeWeatherApp",
+    "version": "1.0.0",
+    "platforms": [
+      "ios",
+      "android",
+      "web"
+    ],
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  }
+}
