@@ -21,6 +21,7 @@ export default class HomeScreen extends Component {
       refreshingTodaysWeather: true,
       refreshingForecast: true,
       refreshingHourly: true,
+      city: props.route.params.city,
     };
 
     this.fetchWeatherData()
@@ -59,9 +60,11 @@ export default class HomeScreen extends Component {
   }
 
   fetchWeatherData() {
-    WeatherAPI.fetchWeatherData(this, this.fetchWeatherCallback);
-    WeatherAPI.fetchWeatherForecast(this, this.fetchForecastCallback);
-    WeatherAPI.fetchHourlyForecast(this, this.fetchHourlyCallback);
+    if(this.state.city != null) {
+      WeatherAPI.fetchWeatherData(this.state.city, this, this.fetchWeatherCallback);
+      WeatherAPI.fetchWeatherForecast(this.state.city, this, this.fetchForecastCallback);
+      WeatherAPI.fetchHourlyForecast(this.state.city, this, this.fetchHourlyCallback);
+    }
   }
 
   getLayout() {
@@ -82,6 +85,8 @@ export default class HomeScreen extends Component {
 
   fetchWeatherCallback(success, context, data) {
     if (success === true) {
+      //GeoLocation API and OpenWeather don't always agree on the name of coordinates, use GeoLocation name for clarity
+      data.name = context.state.city.name
       context.setState({
         refreshingTodaysWeather: false,
         weatherData: data

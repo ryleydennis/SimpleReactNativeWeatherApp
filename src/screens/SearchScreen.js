@@ -9,8 +9,8 @@ import CitySearchAPI from '../api/CityAPI'
 
 export default function SearchScreen({ navigation }) {
     const [cities, setCities] = useState([
-        {name: 'Ann Arbor'},
-        {name: 'Annable'},
+        {name: 'Ann Arbor', lat: 42.279999, lon: -83.790001},
+        {name: 'New York', lat: 40.750000, lon: -74.000000},
         {name: 'Antonio'}
     ]);
 
@@ -44,7 +44,7 @@ function cityCard(city, navigation) {
         <TouchableOpacity
             activeOpacity={0.5}
             onPress={() => {
-                props.navigation.navigate('Home', {
+                navigation.navigate('Home', {
                     city: city
                 })
             }}

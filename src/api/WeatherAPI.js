@@ -3,8 +3,17 @@ import Weather from './Weather';
 import HourlyWeather from './HourlyWeather';
 
 export default class WeatherAPI {
-    static fetchWeatherData(context, callback) {
-        fetch("https://community-open-weather-map.p.rapidapi.com/weather?units=imperial&mode=xml%252C%20html&q=Ann%20Arbor", {
+    static fetchWeatherData(city, context, callback) {
+        var url = new URL('https://community-open-weather-map.p.rapidapi.com/weather');
+        var params = {
+            lat: city.lat,
+            lon: city.lon,
+            units: 'imperial',
+        }
+        Object.keys(params).forEach(key => url.searchParams.append(key, params[key]))
+
+
+        fetch(url, {
             "method": "GET",
             "headers": {
                 "x-rapidapi-host": "community-open-weather-map.p.rapidapi.com",
@@ -13,7 +22,6 @@ export default class WeatherAPI {
         })
             .then(response => response.json())
             .then(data => {
-                console.log('Weather API call: ' + ((data != null && data.id == '4984247') ? 'good' : 'bad' ))
                 var weather = new Weather(data)
                 callback(true, context, weather)
             })
@@ -23,8 +31,18 @@ export default class WeatherAPI {
             });
     }
 
-    static fetchWeatherForecast(context, callback) {
-        fetch("https://community-open-weather-map.p.rapidapi.com/forecast/daily?cnt=7&units=imperial&id=4984247", {
+    static fetchWeatherForecast(city, context, callback) {
+        const count = 7
+        var url = new URL('https://community-open-weather-map.p.rapidapi.com/forecast/daily');
+        var params = {
+            lat: city.lat,
+            lon: city.lon,
+            units: 'imperial',
+            cnt: 7,
+        }
+        Object.keys(params).forEach(key => url.searchParams.append(key, params[key]))
+
+        fetch(url, {
             "method": "GET",
             "headers": {
                 "x-rapidapi-host": "community-open-weather-map.p.rapidapi.com",
@@ -42,8 +60,17 @@ export default class WeatherAPI {
             });
     }
 
-    static fetchHourlyForecast(context, callback) {
-        fetch("https://community-open-weather-map.p.rapidapi.com/forecast?units=imperial&id=4984247", {
+    static fetchHourlyForecast(city, context, callback) {
+        var url = new URL('https://community-open-weather-map.p.rapidapi.com/forecast')
+        var params = {
+            lat: city.lat,
+            lon: city.lon,
+            units: 'imperial',
+
+        }
+        Object.keys(params).forEach(key => url.searchParams.append(key, params[key]))
+
+        fetch(url, {
             "method": "GET",
             "headers": {
                 "x-rapidapi-host": "community-open-weather-map.p.rapidapi.com",
