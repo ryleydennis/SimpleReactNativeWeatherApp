@@ -1,14 +1,18 @@
 import React, { Component, useState } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
+import {NavigationContainer} from '@react-navigation/native';
 
 import { LinearGradient } from 'expo-linear-gradient';
 import Icon from 'react-native-vector-icons/Feather'
 import Styles, { ViewStyle, TextStyle } from '../Styles'
 import CitySearchAPI from '../api/CityAPI'
 
-export default function SearchScreen() {
-    const [input, setInput] = useState('');
-    const [cities, setCities] = useState(['Ann Arbor', 'Annable', 'Antonio']);
+export default function SearchScreen({ navigation }) {
+    const [cities, setCities] = useState([
+        {name: 'Ann Arbor'},
+        {name: 'Annable'},
+        {name: 'Antonio'}
+    ]);
 
     return (
         <LinearGradient
@@ -26,18 +30,24 @@ export default function SearchScreen() {
             <FlatList
                 style={styles.searchList}
                 data={cities}
-                renderItem={({ item }) => (
-                    cityCard({ name: item })
+                keyExtractor={city => city.name}
+                renderItem={(item) => (
+                    cityCard(item.item, navigation)
                 )}
             />
         </LinearGradient>
     )
 }
 
-function cityCard(props) {
+function cityCard(city, navigation) {
     return (
         <TouchableOpacity
             activeOpacity={0.5}
+            onPress={() => {
+                props.navigation.navigate('Home', {
+                    city: city
+                })
+            }}
         >
             <View style={[ViewStyle.card, { marginTop: 6 }]}>
                 <Icon
@@ -47,7 +57,7 @@ function cityCard(props) {
                     style={cityCardStyles.chevron}
                 />
                 <View style={cityCardStyles.cityName}>
-                    <Text style={TextStyle.medium}>{props.name}</Text>
+                    <Text style={TextStyle.medium}>{city.name}</Text>
                 </View>
             </View>
         </TouchableOpacity>

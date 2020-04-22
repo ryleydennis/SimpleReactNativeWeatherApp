@@ -4,12 +4,20 @@ export default class CitySearchResults {
     constructor(searchResults) {
         var results = new GetData(searchResults, 'Results')
 
-        this.names = []
+        this.cities = []
         for (city of results) {
-            this.names.push(GetData(city, 'name'))
+            var name = GetData(city, 'name')
+            var lat = GetData(city, 'lat')
+            var lon = GetData(city, 'lon')
+            this.cities.push(
+                {
+                    name: name,
+                    lat: lat,
+                    lon: lon
+                })
         }
 
-        this.names = this.names.slice(0,6)
+        this.cities = this.cities.slice(0,8)
     }
 }
 

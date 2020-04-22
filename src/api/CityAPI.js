@@ -17,7 +17,7 @@ export default class CitySearchAPI {
             })
                 .then(response => response.json())
                 .then(data => {
-                    var cityList = new CitySearchResults(data).names
+                    var cityList = new CitySearchResults(data).cities
                     callback(cityList)
                 })
                 .catch(err => {

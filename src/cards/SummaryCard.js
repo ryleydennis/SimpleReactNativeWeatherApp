@@ -92,7 +92,6 @@ var getTimeStamp = function () {
     var date = new Date()
 
     var dateStamp = (date.getMonth() + 1) + '/' + date.getDate()
-    console.log('date: ' + date)
 
     var timeStamp = (date.getHours() <= 12 ? date.getHours() : date.getHours() - 12).toString()
     timeStamp += ':' + (date.getMinutes()).toString().padStart(2, 0)
