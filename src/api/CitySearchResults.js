@@ -20,7 +20,7 @@ export default class CitySearchResults {
             }
         }
 
-        this.cities = this.cities.slice(0,8)
+        this.cities = this.cities.slice(0,20)
     }
 
     verifyLat(lat) {
