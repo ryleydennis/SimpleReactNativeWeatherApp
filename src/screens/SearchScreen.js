@@ -12,7 +12,7 @@ export default class SearchScreen extends Component{
         this.state = {
             cities: [],
             inputIsValid: true,
-            latestAPITime: new Date("2000-01-01T00:00:00.000+00:00"),
+            lastAPICall: 0,
             navigation: props.navigation
         }
     }
@@ -45,20 +45,24 @@ export default class SearchScreen extends Component{
     }
 
     searchCityInput(input) {
-        const regex = /^[a-zA-Z\s,]*$/
-        if (regex.test(input)) {
+
+        if (input == '') {
+            this.setState({ inputIsValid: true, cities: [] });
+        } else if (/^[a-zA-Z\s,]*$/.test(input)) {
             this.setState({ inputIsValid: true });
             CitySearchAPI.searchCities(input, this, this.searchCityCallback)
         } else {
             this.setState({ inputIsValid: false, cities: [] });
-            updateCities([])
         }
     }
 
     searchCityCallback(context, data, timeStamp) {
-        context.setState({
-            cities: data
-        });
+        if (context.state.lastAPICall < timeStamp) {
+            context.setState({
+                cities: data,
+                lastAPICall: timeStamp
+            });
+        }
     }
     
     

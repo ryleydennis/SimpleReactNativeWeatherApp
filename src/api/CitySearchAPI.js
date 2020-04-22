@@ -3,9 +3,10 @@ import CitySearchResults from './CitySearchResults'
 export default class CitySearchAPI {
     static searchCities(cityName, context, callback)  {
         if (cityName != null) {
-            var url = new URL('https://devru-latitude-longitude-find-v1.p.rapidapi.com/latlon.php')
-            var params = {location: cityName}
-            Object.keys(params).forEach(key => url.searchParams.append(key, params[key]))
+            var timeStamp = Date.now();
+            var url = new URL('https://devru-latitude-longitude-find-v1.p.rapidapi.com/latlon.php');
+            var params = {location: cityName};
+            Object.keys(params).forEach(key => url.searchParams.append(key, params[key]));
             
             fetch(url, {
                 "method": "GET",
@@ -16,8 +17,8 @@ export default class CitySearchAPI {
             })
                 .then(response => response.json())
                 .then(data => {
-                    var cityList = new CitySearchResults(data).cities
-                    callback(context, cityList)
+                    var cityList = new CitySearchResults(data).cities;
+                    callback(context, cityList, timeStamp);
                 })
                 .catch(err => {
                     console.log(err);
