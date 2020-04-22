@@ -1,4 +1,4 @@
-function GetData(parent, child, suffix, decimalPlace) {
+export function GetData(parent, child, suffix, decimalPlace) {
     var data = ""
 
     if (parent != null && parent[child] != null) {
@@ -17,5 +17,3 @@ function GetData(parent, child, suffix, decimalPlace) {
 
     return data
 }
-
-export { GetData }

@@ -1,14 +1,15 @@
-import GetData from './APIHelperFunctions'
+import { GetData } from './APIHelperFunctions'
 
 export default class CitySearchResults {
     constructor(searchResults) {
-        var results = GetData(searchResults, 'Results')
+        var results = new GetData(searchResults, 'Results')
 
         this.names = []
-        for (city in results) {
-            names.append(GetData(city, 'name'))
+        for (city of results) {
+            this.names.push(GetData(city, 'name'))
         }
-        
+
+        this.names = this.names.slice(0,6)
     }
 }
 
