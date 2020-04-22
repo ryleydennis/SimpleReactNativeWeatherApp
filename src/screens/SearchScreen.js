@@ -8,11 +8,13 @@ import Styles, { ViewStyle, TextStyle } from '../Styles'
 import CitySearchAPI from '../api/CityAPI'
 
 export default function SearchScreen({ navigation }) {
-    const [cities, setCities] = useState([
+    const [cities, updateCities] = useState([
         {name: 'Ann Arbor', lat: 42.279999, lon: -83.790001},
         {name: 'New York', lat: 40.750000, lon: -74.000000},
         {name: 'Antonio'}
     ]);
+    // const [cities, updateCities] = useState([]);
+    const [inputIsValid, updateInputIsValid] = useState(true)
 
     return (
         <LinearGradient
@@ -23,9 +25,10 @@ export default function SearchScreen({ navigation }) {
                 <TextInput
                     style={styles.input}
                     placeholder='New York'
-                    onChangeText={(text) =>  CitySearchAPI.searchCities(text, setCities)}
+                    onChangeText={(input) => searchCityInput(input, updateCities, updateInputIsValid)}
                 />
                 <View style={styles.underLine} />
+                <Text style={styles.errorMessage}>{inputIsValid ? '': '*Please only use letters and spaces'}</Text>
             </View>
             <FlatList
                 style={styles.searchList}
@@ -37,6 +40,17 @@ export default function SearchScreen({ navigation }) {
             />
         </LinearGradient>
     )
+}
+
+function searchCityInput(input, updateCities, updateInputIsValid) {
+    console.log(/^[a-zA-Z\s]*$/.test(input))
+    if (/^[a-zA-Z\s]*$/.test(input)) {
+        updateInputIsValid(true)
+        CitySearchAPI.searchCities(input, updateCities)
+    } else {
+        updateInputIsValid(false)
+        updateCities([])
+    }
 }
 
 function cityCard(city, navigation) {
@@ -100,6 +114,12 @@ const styles = StyleSheet.create({
         height: 0.75,
         width: 250,
         backgroundColor: '#494949',
+        marginBottom: 16,
+    },
+    errorMessage: {
+        color: 'red',
+        position: 'absolute',
+        bottom: 0,
     },
     leftSpacer: {
         height: 30,
