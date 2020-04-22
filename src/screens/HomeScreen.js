@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
     flex: 3,
   },
   listContainer: {
-    marginTop: 40,
+    marginTop: 6,
     marginStart: 20,
     marginEnd: 20,
     flexDirection: 'row',

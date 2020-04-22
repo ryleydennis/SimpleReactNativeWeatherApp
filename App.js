@@ -12,7 +12,7 @@ function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Search">
-        <Stack.Screen name="Home" component={HomeScreen}/>
+        <Stack.Screen name="Weather" component={HomeScreen}/>
         <Stack.Screen name="Search" component={SearchScreen}/>
       </Stack.Navigator>
     </NavigationContainer>

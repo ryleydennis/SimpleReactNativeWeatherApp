@@ -8,12 +8,12 @@ import Styles, { ViewStyle, TextStyle } from '../Styles'
 import CitySearchAPI from '../api/CityAPI'
 
 export default function SearchScreen({ navigation }) {
-    const [cities, updateCities] = useState([
-        {name: 'Ann Arbor', lat: 42.279999, lon: -83.790001},
-        {name: 'New York', lat: 40.750000, lon: -74.000000},
-        {name: 'Antonio'}
-    ]);
-    // const [cities, updateCities] = useState([]);
+    // const [cities, updateCities] = useState([
+    //     {name: 'Ann Arbor', lat: 42.279999, lon: -83.790001},
+    //     {name: 'New York', lat: 40.750000, lon: -74.000000},
+    //     {name: 'Antonio'}
+    // ]);
+    const [cities, updateCities] = useState([]);
     const [inputIsValid, updateInputIsValid] = useState(true)
 
     return (
@@ -24,7 +24,7 @@ export default function SearchScreen({ navigation }) {
             <View style={styles.inputBox}>
                 <TextInput
                     style={styles.input}
-                    placeholder='New York'
+                    placeholder='e.g. New York'
                     onChangeText={(input) => searchCityInput(input, updateCities, updateInputIsValid)}
                 />
                 <View style={styles.underLine} />
@@ -58,7 +58,7 @@ function cityCard(city, navigation) {
         <TouchableOpacity
             activeOpacity={0.5}
             onPress={() => {
-                navigation.navigate('Home', {
+                navigation.navigate('Weather', {
                     city: city
                 })
             }}
