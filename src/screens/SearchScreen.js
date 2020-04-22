@@ -1,83 +1,95 @@
 import React, { Component, useState } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
-import {NavigationContainer} from '@react-navigation/native';
 
 import { LinearGradient } from 'expo-linear-gradient';
 import Icon from 'react-native-vector-icons/Feather'
 import Styles, { ViewStyle, TextStyle } from '../Styles'
-import CitySearchAPI from '../api/CityAPI'
+import CitySearchAPI from '../api/CitySearchAPI'
 
-export default function SearchScreen({ navigation }) {
-    // const [cities, updateCities] = useState([
-    //     {name: 'Ann Arbor', lat: 42.279999, lon: -83.790001},
-    //     {name: 'New York', lat: 40.750000, lon: -74.000000},
-    //     {name: 'Antonio'}
-    // ]);
-    const [cities, updateCities] = useState([]);
-    const [inputIsValid, updateInputIsValid] = useState(true)
+export default class SearchScreen extends Component{
+    constructor(props) {
+        super(props)
+        this.state = {
+            cities: [],
+            inputIsValid: true,
+            latestAPITime: new Date("2000-01-01T00:00:00.000+00:00"),
+            navigation: props.navigation
+        }
+    }
 
-    return (
-        <LinearGradient
-            style={styles.background}
-            colors={['#FFFBF1', '#FFEDC0']}
-        >
-            <View style={styles.inputBox}>
-                <TextInput
-                    style={styles.input}
-                    placeholder='e.g. New York'
-                    onChangeText={(input) => searchCityInput(input, updateCities, updateInputIsValid)}
+    render() {
+        return (
+            <LinearGradient
+                style={styles.background}
+                colors={['#FFFBF1', '#FFEDC0']}
+            >
+                <View style={styles.inputBox}>
+                    <TextInput
+                        style={styles.input}
+                        placeholder='e.g. New York'
+                        onChangeText={(input) => this.searchCityInput(input)}
+                    />
+                    <View style={styles.underLine} />
+                    <Text style={styles.errorMessage}>{this.state.inputIsValid ? '' : '*Please only use letters, spaces, and commas'}</Text>
+                </View>
+                <FlatList
+                    style={styles.searchList}
+                    data={this.state.cities}
+                    keyExtractor={city => city.name}
+                    renderItem={(item) => (
+                        this.cityCard(item.item)
+                    )}
                 />
-                <View style={styles.underLine} />
-                <Text style={styles.errorMessage}>{inputIsValid ? '': '*Please only use letters and spaces'}</Text>
-            </View>
-            <FlatList
-                style={styles.searchList}
-                data={cities}
-                keyExtractor={city => city.name}
-                renderItem={(item) => (
-                    cityCard(item.item, navigation)
-                )}
-            />
-        </LinearGradient>
-    )
-}
+            </LinearGradient>
+        )
+    }
 
-function searchCityInput(input, updateCities, updateInputIsValid) {
-    console.log(/^[a-zA-Z\s]*$/.test(input))
-    if (/^[a-zA-Z\s]*$/.test(input)) {
-        updateInputIsValid(true)
-        CitySearchAPI.searchCities(input, updateCities)
-    } else {
-        updateInputIsValid(false)
-        updateCities([])
+    searchCityInput(input) {
+        const regex = /^[a-zA-Z\s,]*$/
+        if (regex.test(input)) {
+            this.setState({ inputIsValid: true });
+            CitySearchAPI.searchCities(input, this, this.searchCityCallback)
+        } else {
+            this.setState({ inputIsValid: false, cities: [] });
+            updateCities([])
+        }
+    }
+
+    searchCityCallback(context, data, timeStamp) {
+        context.setState({
+            cities: data
+        });
+    }
+    
+    
+    cityCard(city) {
+        return (
+            <TouchableOpacity
+                activeOpacity={0.5}
+                onPress={() => {
+                    this.state.navigation.navigate('Weather', {
+                        city: city
+                    })
+                }}
+            >
+                <View style={[ViewStyle.card, { marginTop: 6 }]}>
+                    <Icon
+                        name="chevron-right"
+                        color='#494949'
+                        size={25}
+                        style={cityCardStyles.chevron}
+                    />
+                    <View style={cityCardStyles.cityName}>
+                        <Text style={TextStyle.medium}>{city.name}</Text>
+                    </View>
+                </View>
+            </TouchableOpacity>
+        )
+    
     }
 }
 
-function cityCard(city, navigation) {
-    return (
-        <TouchableOpacity
-            activeOpacity={0.5}
-            onPress={() => {
-                navigation.navigate('Weather', {
-                    city: city
-                })
-            }}
-        >
-            <View style={[ViewStyle.card, { marginTop: 6 }]}>
-                <Icon
-                    name="chevron-right"
-                    color='#494949'
-                    size={25}
-                    style={cityCardStyles.chevron}
-                />
-                <View style={cityCardStyles.cityName}>
-                    <Text style={TextStyle.medium}>{city.name}</Text>
-                </View>
-            </View>
-        </TouchableOpacity>
-    )
 
-}
 
 const cityCardStyles = StyleSheet.create({
     cityName: {
