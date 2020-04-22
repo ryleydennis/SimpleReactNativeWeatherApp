@@ -6,14 +6,15 @@ import Icon from 'react-native-vector-icons/Feather'
 import Styles, { ViewStyle, TextStyle } from '../Styles'
 import CitySearchAPI from '../api/CitySearchAPI'
 
-export default class SearchScreen extends Component{
+export default class SearchScreen extends Component {
     constructor(props) {
         super(props)
         this.state = {
             cities: [],
             inputIsValid: true,
             lastAPICall: 0,
-            navigation: props.navigation
+            navigation: props.navigation,
+            shadowHeight: 0,
         }
     }
 
@@ -24,13 +25,13 @@ export default class SearchScreen extends Component{
                 colors={['#FFFBF1', '#FFEDC0']}
             >
                 <View style={styles.inputBox}>
+                    <Text style={styles.errorMessage}>{this.state.inputIsValid ? '' : '*Please only use letters, spaces, and commas'}</Text>
                     <TextInput
                         style={styles.input}
                         placeholder='e.g. New York'
                         onChangeText={(input) => this.searchCityInput(input)}
                     />
                     <View style={styles.underLine} />
-                    <Text style={styles.errorMessage}>{this.state.inputIsValid ? '' : '*Please only use letters, spaces, and commas'}</Text>
                 </View>
                 <FlatList
                     style={styles.searchList}
@@ -39,9 +40,29 @@ export default class SearchScreen extends Component{
                     renderItem={(item) => (
                         this.cityCard(item.item)
                     )}
+                    onScroll={(event) => {
+                        this.updateShadowHeight(event.nativeEvent.contentOffset.y);
+                    }}
                 />
+                <LinearGradient
+                    style={[styles.listGradient, { height: this.state.shadowHeight }]}
+                    colors={['#494949', 'rgba(73, 73, 73, 0)']}
+                >
+                </LinearGradient>
             </LinearGradient>
         )
+    }
+
+    updateShadowHeight(offset) {
+        if (this.state.cities.length == 0) {
+            this.setState({ shadowHeight: 0 })
+        } else {
+            //Decreasing the rate in which the shadow grows to make it a little less intrusive looking
+            var calculatedOffset = offset * 0.3
+            const maxHeight = 50
+            var height = calculatedOffset <= maxHeight ? calculatedOffset : maxHeight;
+            this.setState({ shadowHeight: height })
+        }
     }
 
     searchCityInput(input) {
@@ -64,8 +85,8 @@ export default class SearchScreen extends Component{
             });
         }
     }
-    
-    
+
+
     cityCard(city) {
         return (
             <TouchableOpacity
@@ -89,7 +110,7 @@ export default class SearchScreen extends Component{
                 </View>
             </TouchableOpacity>
         )
-    
+
     }
 }
 
@@ -113,11 +134,19 @@ const styles = StyleSheet.create({
     background: {
         flex: 1,
         alignItems: 'center',
-        paddingTop: 60,
+        paddingTop: 30,
         paddingStart: 16,
         paddingEnd: 16,
     },
+    listGradient: {
+        flex: 1,
+        width: '100%',
+        position: 'absolute',
+        top: 102.75,
+        opacity: 0.2,
+    },
     input: {
+        marginTop: 16,
         textAlign: 'center',
         alignSelf: 'center',
         height: 30,
@@ -128,14 +157,13 @@ const styles = StyleSheet.create({
     },
     underLine: {
         height: 0.75,
-        width: 250,
+        width: '100%',
         backgroundColor: '#494949',
-        marginBottom: 16,
     },
     errorMessage: {
         color: 'red',
         position: 'absolute',
-        bottom: 0,
+        top: 0,
     },
     leftSpacer: {
         height: 30,
@@ -145,13 +173,10 @@ const styles = StyleSheet.create({
         width: '100%',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: 10,
+        paddingTop: 10,
         marginTop: 16,
-
     },
     searchList: {
-        marginTop: 16,
-        marginBottom: 80,
         flexGrow: 1,
         width: '100%',
     }
