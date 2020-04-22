@@ -14,6 +14,11 @@ export default class HourlyTempCard extends Component {
 
     render() {
         var hourlyData = this.state.hourlyData;
+
+        if (hourlyData.timeStamps.length == 0) {
+            return (<View></View>)
+        }
+        
         return (
             <View style={ViewStyle.card}>
                 <View style={styles.hourlyCard}>
@@ -31,7 +36,9 @@ export default class HourlyTempCard extends Component {
     
 
     getTimeLables(timeStamps) {
-        var previousDay = timeStamps[0].getDay()
+        if (timeStamps.length != 0) {
+            var previousDay = timeStamps[0].getDay()
+        }
         var times = [];
         for (var timeStamp of timeStamps) {
             var time = (timeStamp.getHours() <= 12 ? timeStamp.getHours() : timeStamp.getHours() - 12).toString()

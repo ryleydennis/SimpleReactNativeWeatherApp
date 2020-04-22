@@ -14,6 +14,7 @@ import HourlyWeather from '../api/HourlyWeather';
 export default class HomeScreen extends Component {
   constructor(props) {
     super(props)
+    console.log(props.route.params.city)
     this.state = {
       weatherData: new Weather(),
       forecastData: new Forecast(),
