@@ -1,28 +1,52 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, Text, Image } from 'react-native';
+import { View, StyleSheet, Text, Image, AsyncStorage } from 'react-native';
 import { ViewStyle, TextStyle } from '../Styles'
+import Icon from 'react-native-vector-icons/FontAwesome';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
+import FavoritesHelper from '../FavoritesStorageHelper'
 
-
+const favoritesHelper = new FavoritesHelper();
 export default class SummaryCard extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            weatherData: props.weatherData
+            weatherData: props.weatherData,
+            city: props.city,
+            isFavorite: false,
         };
+
+        favoritesHelper.checkIfFavorite(this.state.city).then(isFavorite => {
+            this.setState({
+                isFavorite: isFavorite,
+            })
+        })
     };
 
 
     render() {
-        var date = new Date()
+
         var weather = this.state.weatherData;
         return (
             <View style={ViewStyle.card}>
                 <View style={styles.summaryCard}>
-                    <Text style={TextStyle.title}>{weather.name}</Text>
+                    <View style={{ flexDirection: 'row' }}>
+                        <Text style={[TextStyle.title, { flexGrow: 1 }]}>{weather.name}</Text>
+                        <TouchableOpacity
+                            style={{ margin: 6, }}
+                            onPress={() => {
+                                favoritesHelper.setFavorites(!this.state.isFavorite, this.state.city, this, this.updatedFavoriteCallback)
+                            }}
+                        >
+                            <Icon
+                                name={this.state.isFavorite ? "star" : "star-o"}
+                                color={this.state.isFavorite ? 'gold' : '#494949'}
+                                size={25}
+                            />
+                        </TouchableOpacity>
+                    </View>
                     <Text style={TextStyle.mild}>{getTimeStamp()}</Text>
                     <View style={{ width: '70%', height: 0.75, backgroundColor: '#494949', marginTop: 3 }} />
-
                     <View style={{ width: '100%', flexDirection: 'row', marginTop: 10, justifyContent: "space-between" }}>
                         <View>
                             <Text style={TextStyle.large}>{weather.temp + 'F'}</Text>
@@ -40,6 +64,12 @@ export default class SummaryCard extends Component {
                 </View>
             </View>
         )
+    }
+
+    updatedFavoriteCallback(context, isFavorite){
+        context.setState({
+            isFavorite: isFavorite
+        })
     }
 }
 

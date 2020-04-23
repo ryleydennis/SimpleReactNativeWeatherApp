@@ -2,10 +2,13 @@ import React, { Component, useState } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
 
 import { LinearGradient } from 'expo-linear-gradient';
-import Icon from 'react-native-vector-icons/Feather'
-import Styles, { ViewStyle, TextStyle } from '../Styles'
-import CitySearchAPI from '../api/CitySearchAPI'
+import { Feather, FontAwesome } from 'react-native-vector-icons';
+import Styles, { ViewStyle, TextStyle } from '../Styles';
+import CitySearchAPI from '../api/CitySearchAPI';
+import FavoritesHelper from '../FavoritesStorageHelper'
 
+
+const favoritesHelper = new FavoritesHelper()
 export default class SearchScreen extends Component {
     constructor(props) {
         super(props)
@@ -15,7 +18,29 @@ export default class SearchScreen extends Component {
             lastAPICall: 0,
             navigation: props.navigation,
             shadowHeight: 0,
+            favorites: [],
         }
+
+        favoritesHelper.getFavorites()
+            .then(favorites => {
+                this.setState({
+                    favorites: favorites,
+                })
+            })
+    }
+    componentDidMount() {
+        this._unsubscribe = this.state.navigation.addListener('focus', () => {
+            favoritesHelper.getFavorites()
+                .then(favorites => {
+                    this.setState({
+                        favorites: favorites,
+                    })
+                })
+        });
+    }
+
+    componentWillUnmount() {
+        this._unsubscribe();
     }
 
     render() {
@@ -27,15 +52,17 @@ export default class SearchScreen extends Component {
                 <View style={styles.inputBox}>
                     <Text style={styles.errorMessage}>{this.state.inputIsValid ? '' : '*Please only use letters, spaces, and commas'}</Text>
                     <TextInput
+                        clearButtonMode="always"
                         style={styles.input}
                         placeholder='e.g. New York'
+                        ref={input => { this.textInput = input }}
                         onChangeText={(input) => this.searchCityInput(input)}
                     />
                     <View style={styles.underLine} />
                 </View>
                 <FlatList
                     style={styles.searchList}
-                    data={this.state.cities}
+                    data={this.state.cities.length == 0 ? this.state.favorites : this.state.cities}
                     keyExtractor={city => city.name}
                     renderItem={(item) => (
                         this.cityCard(item.item)
@@ -86,31 +113,42 @@ export default class SearchScreen extends Component {
         }
     }
 
-
     cityCard(city) {
+        const isFavorite = favoritesHelper.checkFavoritesForCity(this.state.favorites, city)
+        const starOpacity = isFavorite ? 1 : 0
+
         return (
             <TouchableOpacity
                 activeOpacity={0.5}
                 onPress={() => {
+                    this.textInput.clear()
+                    this.setState({
+                        cities: []
+                    })
                     this.state.navigation.navigate('Weather', {
                         city: city
                     })
                 }}
             >
-                <View style={[ViewStyle.card, { marginTop: 6 }]}>
-                    <Icon
+                <View style={[ViewStyle.card, { marginTop: 6, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingStart: 6 }]}>
+                    <FontAwesome
+                        name={"star"}
+                        color={isFavorite ? 'gold' : '#494949'}
+                        size={20}
+                        style={{ opacity: starOpacity }}
+                    />
+                    <View style={cityCardStyles.cityName}>
+                        <Text style={TextStyle.medium}>{city.name}</Text>
+                    </View>
+                    <Feather
                         name="chevron-right"
                         color='#494949'
                         size={25}
                         style={cityCardStyles.chevron}
                     />
-                    <View style={cityCardStyles.cityName}>
-                        <Text style={TextStyle.medium}>{city.name}</Text>
-                    </View>
                 </View>
             </TouchableOpacity>
         )
-
     }
 }
 
@@ -123,11 +161,6 @@ const cityCardStyles = StyleSheet.create({
         alignSelf: 'center',
         margin: 10,
     },
-    chevron: {
-        position: 'absolute',
-        right: 10,
-        top: '22%',
-    }
 })
 
 const styles = StyleSheet.create({
@@ -150,7 +183,7 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         alignSelf: 'center',
         height: 30,
-        width: 230,
+        width: '80%',
         borderRadius: 10,
         fontSize: 20,
         color: '#494949'

@@ -14,7 +14,6 @@ import HourlyWeather from '../api/HourlyWeather';
 export default class HomeScreen extends Component {
   constructor(props) {
     super(props)
-    console.log(props)
     this.state = {
       weatherData: new Weather(),
       forecastData: new Forecast(),
@@ -46,7 +45,7 @@ export default class HomeScreen extends Component {
               extraData={this.state}
             />
           </View>
-        </LinearGradient> 
+        </LinearGradient>
       </View>
     );
   }
@@ -61,7 +60,7 @@ export default class HomeScreen extends Component {
   }
 
   fetchWeatherData() {
-    if(this.state.city != null) {
+    if (this.state.city != null) {
       WeatherAPI.fetchWeatherData(this.state.city, this, this.fetchWeatherCallback);
       WeatherAPI.fetchWeatherForecast(this.state.city, this, this.fetchForecastCallback);
       WeatherAPI.fetchHourlyForecast(this.state.city, this, this.fetchHourlyCallback);
@@ -75,7 +74,7 @@ export default class HomeScreen extends Component {
       ]
     } else {
       return [
-        { id: '1', layout: <SummaryCard style={styles.cardColumn} weatherData={this.state.weatherData} /> },
+        { id: '1', layout: <SummaryCard style={styles.cardColumn} weatherData={this.state.weatherData} city={this.state.city}/> },
         { id: '2', layout: <WeatherInfoCard style={styles.cardColumn} weatherData={this.state.weatherData} /> },
         { id: '3', layout: <HourlyTempCard style={styles.cardColumn} hourlyData={this.state.hourlyData} /> },
         { id: '4', layout: <WeatherForecastCard style={styles.cardColumn} forecastData={this.state.forecastData} /> },
