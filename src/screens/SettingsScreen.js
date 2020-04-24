@@ -24,12 +24,10 @@ export default function SettingsScreen({ navigation }) {
         const unsubscribe = navigation.addListener('focus', () => {
             settingsHelper.getSavedUnit()
                 .then(storedUnit => {
-                    console.log(storedUnit)
                     setUnit(storedUnit)
                 })
             settingsHelper.getSavedTimeZone()
                 .then(storedTimeZone => {
-                    console.log(storedTimeZone)
                     setTimeZone(storedTimeZone)
                 })
         });
@@ -55,30 +53,54 @@ export default function SettingsScreen({ navigation }) {
                     style={styles.underLine}
                 />
 
-                <FlatList
-                    data={unitOptionsVisible ? [] : settingsHelper.getAvailableUnits()}
-                    renderItem={({ item }) => listItem(item)}
-                    keyExtractor={item => item.label}
-                    style={{ position: 'absolute', left: unitLocation.left, top: unitLocation.top }}
-                />
-
                 <Text style={[TextStyle.medium, styles.settingLabel]}>TimeZone</Text>
                 <TouchableOpacity >
                     <Text style={styles.settingOption}>{timeZone.abbr}</Text>
                 </TouchableOpacity>
                 <View style={styles.underLine} />
 
+                <FlatList
+                    data={unitOptionsVisible ? [] : settingsHelper.getAvailableUnits()}
+                    renderItem={({ item }) => listItem(item, updateUnitSelection)}
+                    keyExtractor={item => item.label}
+                    style={{ position: 'absolute', left: unitLocation.left, top: unitLocation.top }}
+                />
+
             </View>
         </LinearGradient>
     )
 
 }
+function updateUnitSelection(unit) {
+    settingsHelper.setSavedUnit(unit)
+        .then( storedUnit => {
+            setUnit(storedUnit)
+            setUnitOptionsVisible('false')
+        })
+}
 
-const listItem = (item) => {
+const listItem = (item, callback) => {
+    const listStyles = StyleSheet.create({
+        background: {
+            backgroundColor: 'white',
+            borderColor: 'lightgray',
+            borderWidth: 1,
+            padding: 6,
+            width: 300,
+        }
+    })
+
     return (
-        <Text>{item.label}</Text>
+        <View style={listStyles.background}>
+            <TouchableOpacity
+            onPress={() => callback(item)}
+            >
+                <Text style={[TextStyle.medium, {fontSize: 25}]}>{item.label}</Text>
+            </TouchableOpacity>
+        </View>
     )
 }
+
 
 
 function updateLocation(setLocation, layout) {
@@ -121,7 +143,6 @@ const styles = StyleSheet.create({
     },
     settingOption: {
         marginTop: 6,
-        height: 30,
         width: '80%',
         fontSize: 30,
         color: '#494949'
@@ -129,7 +150,7 @@ const styles = StyleSheet.create({
     underLine: {
         marginTop: 6,
         height: 0.75,
-        width: '80%',
+        width: 300,
         backgroundColor: '#494949',
     },
 
