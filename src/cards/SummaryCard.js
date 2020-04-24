@@ -4,7 +4,7 @@ import { ViewStyle, TextStyle } from '../Styles'
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
-import FavoritesHelper from '../FavoritesStorageHelper'
+import FavoritesHelper from '../AsyncStorageHelpers/FavoritesStorageHelper'
 
 const favoritesHelper = new FavoritesHelper();
 export default class SummaryCard extends Component {

@@ -2,10 +2,10 @@ import React, { Component, useState } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
 
 import { LinearGradient } from 'expo-linear-gradient';
-import { Feather, FontAwesome } from 'react-native-vector-icons';
+import { Feather, FontAwesome, Octicons } from 'react-native-vector-icons';
 import Styles, { ViewStyle, TextStyle } from '../Styles';
 import CitySearchAPI from '../api/CitySearchAPI';
-import FavoritesHelper from '../FavoritesStorageHelper'
+import FavoritesHelper from '../AsyncStorageHelpers/FavoritesStorageHelper'
 
 
 const favoritesHelper = new FavoritesHelper()
@@ -49,6 +49,15 @@ export default class SearchScreen extends Component {
                 style={styles.background}
                 colors={['#FFFBF1', '#FFEDC0']}
             >
+                <TouchableOpacity
+                    style={{ position: 'absolute', right: 16, top: 16 }}
+                >
+                    <Octicons
+                        name='gear'
+                        size={30}
+                        color='#494949'
+                    />
+                </TouchableOpacity>
                 <View style={styles.inputBox}>
                     <Text style={styles.errorMessage}>{this.state.inputIsValid ? '' : '*Please only use letters, spaces, and commas'}</Text>
                     <TextInput
