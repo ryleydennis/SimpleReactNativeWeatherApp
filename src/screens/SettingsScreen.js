@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { Component } from 'react';
 import { View, Text, StyleSheet, Picker, FlatList } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ViewStyle, TextStyle } from '../Styles';
@@ -10,18 +10,20 @@ import { TextInput, TouchableOpacity } from 'react-native-gesture-handler';
 const settingsHelper = new SettingsHelper()
 
 
-export default function SettingsScreen({ navigation }) {
-    const [unit, setUnit] = useState({});
-    const [timeZone, setTimeZone] = useState({})
+export default class SettingsScreen extends Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            navigation: props.navigation,
+            unit: {},
+            timeZone: {},
+            unitOptionsVisible: 'false',
+            unitLocation: { top: 0, left: 0 }
+        }
+    }
 
-    const [unitOptionsVisible, setUnitOptionsVisible] = useState('false')
-    const [unitLocation, setUnitLocation] = useState({
-        top: 0,
-        left: 0
-    })
-
-    React.useEffect(() => {
-        const unsubscribe = navigation.addListener('focus', () => {
+    componentDidMount() {
+        this._unsubscribe = this.state.navigation.addListener('focus', () => {
             settingsHelper.getSavedUnit()
                 .then(storedUnit => {
                     setUnit(storedUnit)
@@ -31,55 +33,66 @@ export default function SettingsScreen({ navigation }) {
                     setTimeZone(storedTimeZone)
                 })
         });
+    }
 
-        // Return the function to unsubscribe from the event so it gets removed on unmount
-        return unsubscribe;
-    }, [navigation]);
+    componentWillUnmount() {
+        this._unsubscribe();
+    }
 
-    return (
-        <LinearGradient
-            style={styles.background}
-            colors={['#FFFBF1', '#FFEDC0']}
-        >
-            <View style={styles.settings}>
-                <Text style={[TextStyle.medium, styles.settingLabel]}>Units</Text>
-                <TouchableOpacity
-                    onPress={() => {setUnitOptionsVisible(!unitOptionsVisible)}}
-                >
-                    <Text style={styles.settingOption}>{unit.label}</Text>
-                </TouchableOpacity>
-                <View
-                    onLayout={event => { updateLocation(setUnitLocation, event.nativeEvent.layout) }}
-                    style={styles.underLine}
-                />
+    render() {
+        return (
+            <LinearGradient
+                style={styles.background}
+                colors={['#FFFBF1', '#FFEDC0']}
+            >
+                <View style={styles.settings}>
+                    <Text style={[TextStyle.medium, styles.settingLabel]}>Units</Text>
+                    <TouchableOpacity
+                        onPress={() => { this.setState({ unitOptionsVisible: !this.state.unitOptionsVisible }) }}
+                    >
+                        <Text style={styles.settingOption}>{this.state.unit.label}</Text>
+                    </TouchableOpacity>
+                    <View
+                        onLayout={event => { this.updateLocation(event.nativeEvent.layout) }}
+                        style={styles.underLine}
+                    />
 
-                <Text style={[TextStyle.medium, styles.settingLabel]}>TimeZone</Text>
-                <TouchableOpacity >
-                    <Text style={styles.settingOption}>{timeZone.abbr}</Text>
-                </TouchableOpacity>
-                <View style={styles.underLine} />
+                    <Text style={[TextStyle.medium, styles.settingLabel]}>TimeZone</Text>
+                    <TouchableOpacity >
+                        <Text style={styles.settingOption}>{this.state.timeZone.abbr}</Text>
+                    </TouchableOpacity>
+                    <View style={styles.underLine} />
 
-                <FlatList
-                    data={unitOptionsVisible ? [] : settingsHelper.getAvailableUnits()}
-                    renderItem={({ item }) => listItem(item, updateUnitSelection)}
-                    keyExtractor={item => item.label}
-                    style={{ position: 'absolute', left: unitLocation.left, top: unitLocation.top }}
-                />
+                    <FlatList
+                        data={this.state.unitOptionsVisible ? [] : settingsHelper.getAvailableUnits()}
+                        renderItem={({ item }) => listItem(item, this)}
+                        keyExtractor={item => item.label}
+                        style={{ position: 'absolute', left: this.state.unitLocation.left, top: this.state.unitLocation.top }}
+                    />
 
-            </View>
-        </LinearGradient>
-    )
+                </View>
+            </LinearGradient>
+        )
+    }
 
-}
-function updateUnitSelection(unit) {
-    settingsHelper.setSavedUnit(unit)
-        .then( storedUnit => {
-            setUnit(storedUnit)
-            setUnitOptionsVisible('false')
+
+    updateLocation(layout) {
+        var top = layout.y + layout.height * 2
+        this.setState({
+            unitLocation: {
+                left: layout.x,
+                top: top
+            }
         })
+        console.log({
+            left: layout.x,
+            top: top
+        })
+    }
+
 }
 
-const listItem = (item, callback) => {
+const listItem = (item, context) => {
     const listStyles = StyleSheet.create({
         background: {
             backgroundColor: 'white',
@@ -93,37 +106,24 @@ const listItem = (item, callback) => {
     return (
         <View style={listStyles.background}>
             <TouchableOpacity
-            onPress={() => callback(item)}
+                onPress={() => updateUnitSelection(item, context)}
             >
-                <Text style={[TextStyle.medium, {fontSize: 25}]}>{item.label}</Text>
+                <Text style={[TextStyle.medium, { fontSize: 25 }]}>{item.label}</Text>
             </TouchableOpacity>
         </View>
     )
 }
 
-
-
-function updateLocation(setLocation, layout) {
-    var top = layout.y + layout.height * 2
-    setLocation({
-        left: layout.x,
-        top: top
-    })
-    console.log({
-        left: layout.x,
-        top: top
-    })
+function updateUnitSelection(unit, context) {
+    settingsHelper.setSavedUnit(unit)
+        .then(storedUnit => {
+            context.setState({
+                unit: unit,
+                unitOptionsVisible: 'false'
+            })
+        })
 }
 
-function getPickerItems() {
-    var options = settingsHelper.getAvailableUnits()
-    console.log(options)
-
-    var items = []
-    options.forEach(option => items.push(<Picker.Item label={option.label} value={option.value} />))
-
-    return items
-}
 
 const styles = StyleSheet.create({
     background: {
@@ -144,6 +144,7 @@ const styles = StyleSheet.create({
     settingOption: {
         marginTop: 6,
         width: '80%',
+        height: 30,
         fontSize: 30,
         color: '#494949'
     },
