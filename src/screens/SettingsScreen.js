@@ -1,25 +1,26 @@
 import React, { Component } from 'react';
 import { View, Text, StyleSheet, Picker, FlatList } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { ViewStyle, TextStyle } from '../Styles';
+import { TouchableOpacity, TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
 import SettingsHelper from '../AsyncStorageHelpers/SettingsStorageHelper';
-import { TextInput, TouchableOpacity, TouchableWithoutFeedback } from 'react-native-gesture-handler';
-
+import { ViewStyle, TextStyle } from '../Styles';
+import DropDown from '../DropDown';
 
 const settingsHelper = new SettingsHelper()
 
 
 export default class SettingsScreen extends Component {
     constructor(props) {
-        super(props)
+        super(props);
         this.state = {
             navigation: props.navigation,
             unit: {},
             timeZone: {},
-            unitOptionsVisible: 'false',
+            unitOptionsVisible: false,
             unitLocation: { top: 0, left: 0 }
-        }
+        };
+        this.updateUnitSelection = this.updateUnitSelection.bind(this)
     }
 
     componentDidMount() {
@@ -56,7 +57,10 @@ export default class SettingsScreen extends Component {
                     <View style={styles.settings} >
                         <Text style={[TextStyle.medium, styles.settingLabel]}>Units</Text>
                         <TouchableOpacity
-                            onPress={() => { this.setState({ unitOptionsVisible: !this.state.unitOptionsVisible }) }}
+                            onPress={() => {
+                                var isVisible = !this.state.unitOptionsVisible
+                                this.setState({ unitOptionsVisible: isVisible})
+                            }}
                         >
                             <Text style={styles.settingOption}>{this.state.unit.label}</Text>
                         </TouchableOpacity>
@@ -71,11 +75,11 @@ export default class SettingsScreen extends Component {
                         </TouchableOpacity>
                         <View style={styles.underLine} />
 
-                        <FlatList
-                            data={this.state.unitOptionsVisible ? [] : settingsHelper.getAvailableUnits()}
-                            renderItem={({ item }) => listItem(item, this)}
-                            keyExtractor={item => item.label}
-                            style={{ position: 'absolute', left: this.state.unitLocation.left, top: this.state.unitLocation.top }}
+                        <DropDown
+                            visible={this.state.unitOptionsVisible}
+                            data={settingsHelper.getAvailableUnits()}
+                            location={this.state.unitLocation}
+                            optionPressed={this.updateUnitSelection}
                         />
 
                     </View>
@@ -93,51 +97,26 @@ export default class SettingsScreen extends Component {
                 top: top
             }
         })
-        console.log({
-            left: layout.x,
-            top: top
-        })
     }
 
     hideDropDowns() {
         this.setState({
-            unitOptionsVisible: 'false',
+            unitOptionsVisible: false,
         })
     }
 
-}
-
-const listItem = (item, context) => {
-    const listStyles = StyleSheet.create({
-        background: {
-            backgroundColor: 'white',
-            borderColor: 'lightgray',
-            borderWidth: 1,
-            padding: 6,
-            width: 300,
-        }
-    })
-
-    return (
-        <View style={listStyles.background}>
-            <TouchableOpacity
-                onPress={() => updateUnitSelection(item, context)}
-            >
-                <Text style={[TextStyle.medium, { fontSize: 25 }]}>{item.label}</Text>
-            </TouchableOpacity>
-        </View>
-    )
-}
-
-function updateUnitSelection(unit, context) {
-    settingsHelper.setSavedUnit(unit)
-        .then(storedUnit => {
-            context.setState({
-                unit: unit,
-                unitOptionsVisible: 'false'
+    updateUnitSelection(unit) {
+        settingsHelper.setSavedUnit(unit)
+            .then(storedUnit => {
+                this.setState({
+                    unit: unit,
+                    unitOptionsVisible: false,
+                })
             })
-        })
+    }
 }
+
+
 
 
 const styles = StyleSheet.create({
