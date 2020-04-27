@@ -4,7 +4,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { ViewStyle, TextStyle } from '../Styles';
 
 import SettingsHelper from '../AsyncStorageHelpers/SettingsStorageHelper';
-import { TextInput, TouchableOpacity } from 'react-native-gesture-handler';
+import { TextInput, TouchableOpacity, TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
 
 const settingsHelper = new SettingsHelper()
@@ -26,11 +26,15 @@ export default class SettingsScreen extends Component {
         this._unsubscribe = this.state.navigation.addListener('focus', () => {
             settingsHelper.getSavedUnit()
                 .then(storedUnit => {
-                    setUnit(storedUnit)
+                    this.setState({
+                        unit: storedUnit,
+                    })
                 })
             settingsHelper.getSavedTimeZone()
                 .then(storedTimeZone => {
-                    setTimeZone(storedTimeZone)
+                    this.setState({
+                        timeZone: storedTimeZone,
+                    })
                 })
         });
     }
@@ -41,37 +45,42 @@ export default class SettingsScreen extends Component {
 
     render() {
         return (
-            <LinearGradient
-                style={styles.background}
-                colors={['#FFFBF1', '#FFEDC0']}
+            <TouchableWithoutFeedback
+                style={{ width: '100%', height: '100%' }}
+                onPress={() => this.hideDropDowns()}
             >
-                <View style={styles.settings}>
-                    <Text style={[TextStyle.medium, styles.settingLabel]}>Units</Text>
-                    <TouchableOpacity
-                        onPress={() => { this.setState({ unitOptionsVisible: !this.state.unitOptionsVisible }) }}
-                    >
-                        <Text style={styles.settingOption}>{this.state.unit.label}</Text>
-                    </TouchableOpacity>
-                    <View
-                        onLayout={event => { this.updateLocation(event.nativeEvent.layout) }}
-                        style={styles.underLine}
-                    />
+                <LinearGradient
+                    style={styles.background}
+                    colors={['#FFFBF1', '#FFEDC0']}
+                >
+                    <View style={styles.settings} >
+                        <Text style={[TextStyle.medium, styles.settingLabel]}>Units</Text>
+                        <TouchableOpacity
+                            onPress={() => { this.setState({ unitOptionsVisible: !this.state.unitOptionsVisible }) }}
+                        >
+                            <Text style={styles.settingOption}>{this.state.unit.label}</Text>
+                        </TouchableOpacity>
+                        <View
+                            onLayout={event => { this.updateLocation(event.nativeEvent.layout) }}
+                            style={styles.underLine}
+                        />
 
-                    <Text style={[TextStyle.medium, styles.settingLabel]}>TimeZone</Text>
-                    <TouchableOpacity >
-                        <Text style={styles.settingOption}>{this.state.timeZone.abbr}</Text>
-                    </TouchableOpacity>
-                    <View style={styles.underLine} />
+                        <Text style={[TextStyle.medium, styles.settingLabel]}>TimeZone</Text>
+                        <TouchableOpacity >
+                            <Text style={styles.settingOption}>{this.state.timeZone.abbr}</Text>
+                        </TouchableOpacity>
+                        <View style={styles.underLine} />
 
-                    <FlatList
-                        data={this.state.unitOptionsVisible ? [] : settingsHelper.getAvailableUnits()}
-                        renderItem={({ item }) => listItem(item, this)}
-                        keyExtractor={item => item.label}
-                        style={{ position: 'absolute', left: this.state.unitLocation.left, top: this.state.unitLocation.top }}
-                    />
+                        <FlatList
+                            data={this.state.unitOptionsVisible ? [] : settingsHelper.getAvailableUnits()}
+                            renderItem={({ item }) => listItem(item, this)}
+                            keyExtractor={item => item.label}
+                            style={{ position: 'absolute', left: this.state.unitLocation.left, top: this.state.unitLocation.top }}
+                        />
 
-                </View>
-            </LinearGradient>
+                    </View>
+                </LinearGradient>
+            </TouchableWithoutFeedback>
         )
     }
 
@@ -87,6 +96,12 @@ export default class SettingsScreen extends Component {
         console.log({
             left: layout.x,
             top: top
+        })
+    }
+
+    hideDropDowns() {
+        this.setState({
+            unitOptionsVisible: 'false',
         })
     }
 
