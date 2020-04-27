@@ -6,9 +6,11 @@ import { Feather, FontAwesome, Octicons } from 'react-native-vector-icons';
 import Styles, { ViewStyle, TextStyle } from '../Styles';
 import CitySearchAPI from '../api/CitySearchAPI';
 import FavoritesHelper from '../AsyncStorageHelpers/FavoritesStorageHelper'
+import SettingsHelper from '../AsyncStorageHelpers/SettingsStorageHelper';
 
 
-const favoritesHelper = new FavoritesHelper()
+const favoritesHelper = new FavoritesHelper();
+const settingsHelper = new SettingsHelper();
 export default class SearchScreen extends Component {
     constructor(props) {
         super(props)
@@ -19,23 +21,19 @@ export default class SearchScreen extends Component {
             navigation: props.navigation,
             shadowHeight: 0,
             favorites: [],
+            timeZone: '',
+            filteredCities: [],
+            filterEnabled: false,
+            userInput: '',
         }
 
-        favoritesHelper.getFavorites()
-            .then(favorites => {
-                this.setState({
-                    favorites: favorites,
-                })
-            })
+        this.refreshAsyncData = this.refreshAsyncData.bind(this)
+        this.refreshAsyncData()
+
     }
     componentDidMount() {
         this._unsubscribe = this.state.navigation.addListener('focus', () => {
-            favoritesHelper.getFavorites()
-                .then(favorites => {
-                    this.setState({
-                        favorites: favorites,
-                    })
-                })
+            this.refreshAsyncData()
         });
     }
 
@@ -51,6 +49,7 @@ export default class SearchScreen extends Component {
             >
                 <TouchableOpacity
                     style={{ position: 'absolute', right: 16, top: 16 }}
+                    onPress={() => this.state.navigation.navigate('Settings')}
                 >
                     <Octicons
                         name='gear'
@@ -71,7 +70,7 @@ export default class SearchScreen extends Component {
                 </View>
                 <FlatList
                     style={styles.searchList}
-                    data={this.state.cities.length == 0 ? this.state.favorites : this.state.cities}
+                    data={this.getListData()}
                     keyExtractor={city => city.name}
                     renderItem={(item) => (
                         this.cityCard(item.item)
@@ -88,6 +87,16 @@ export default class SearchScreen extends Component {
             </LinearGradient>
         )
     }
+    // this.state.userInput == 0 ? this.state.favorites : this.state.cities
+    getListData() {
+        if (this.state.userInput.length == 0) {
+            return this.state.favorites
+        } else if (this.state.filterEnabled) {
+            return this.state.filteredCities
+        } else {
+            return this.state.cities
+        }
+    }
 
     updateShadowHeight(offset) {
         if (this.state.cities.length == 0) {
@@ -102,6 +111,7 @@ export default class SearchScreen extends Component {
     }
 
     searchCityInput(input) {
+        this.setState({ userInput: input })
 
         if (input == '') {
             this.setState({ inputIsValid: true, cities: [] });
@@ -115,11 +125,35 @@ export default class SearchScreen extends Component {
 
     searchCityCallback(context, data, timeStamp) {
         if (context.state.lastAPICall < timeStamp) {
+            var filteredData = data.filter(city => city.timeZone.includes(context.state.timeZone))
             context.setState({
                 cities: data,
+                filteredCities: filteredData,
                 lastAPICall: timeStamp
             });
         }
+    }
+
+    refreshAsyncData() {
+        favoritesHelper.getFavorites()
+        .then(favorites => {
+            this.setState({
+                favorites: favorites,
+                })
+            })
+        settingsHelper.getSavedTimeZone()
+            .then(savedTimeZone => {
+                this.setState({
+                    timeZone: savedTimeZone.label,
+                })
+            })
+        settingsHelper.getTimeZoneFilter()
+            .then(isFilterEnabled => {
+                console.log(isFilterEnabled)
+                this.setState({
+                    filterEnabled: isFilterEnabled,
+                })
+            })
     }
 
     cityCard(city) {
@@ -149,12 +183,15 @@ export default class SearchScreen extends Component {
                     <View style={cityCardStyles.cityName}>
                         <Text style={TextStyle.medium}>{city.name}</Text>
                     </View>
-                    <Feather
-                        name="chevron-right"
-                        color='#494949'
-                        size={25}
-                        style={cityCardStyles.chevron}
-                    />
+                    <View style={{ flexDirection: 'row' }}>
+                        <Text style={{ alignSelf: 'center', color: 'gray' }}>{city.timeZone}</Text>
+                        <Feather
+                            name="chevron-right"
+                            color='#494949'
+                            size={25}
+                            style={cityCardStyles.chevron}
+                        />
+                    </View>
                 </View>
             </TouchableOpacity>
         )

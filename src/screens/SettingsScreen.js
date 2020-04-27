@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, Picker, FlatList } from 'react-native';
+import { View, Text, StyleSheet, Keyboard } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { TouchableOpacity, TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import { TouchableOpacity, TouchableWithoutFeedback, TextInput, Switch } from 'react-native-gesture-handler';
 
 import SettingsHelper from '../AsyncStorageHelpers/SettingsStorageHelper';
 import { ViewStyle, TextStyle } from '../Styles';
@@ -18,9 +18,15 @@ export default class SettingsScreen extends Component {
             unit: {},
             timeZone: {},
             unitOptionsVisible: false,
-            unitLocation: { top: 0, left: 0 }
+            timeZoneOptionsVisible: false,
+            unitLocation: { top: 0, left: 0 },
+            timeZoneLocation: { top: 0, left: 0 },
+            isEditingTimeZone: false,
+            timeZoneSearch: '',
+            filterEnabled: false,
         };
         this.updateUnitSelection = this.updateUnitSelection.bind(this)
+        this.updateTimeZoneSelection = this.updateTimeZoneSelection.bind(this)
     }
 
     componentDidMount() {
@@ -30,13 +36,19 @@ export default class SettingsScreen extends Component {
                     this.setState({
                         unit: storedUnit,
                     })
-                })
+                });
             settingsHelper.getSavedTimeZone()
                 .then(storedTimeZone => {
                     this.setState({
                         timeZone: storedTimeZone,
                     })
-                })
+                });
+            settingsHelper.getTimeZoneFilter()
+                .then(storedIsEnabled => {
+                    this.setState({
+                        filterEnabled: storedIsEnabled
+                    })
+                });
         });
     }
 
@@ -48,38 +60,66 @@ export default class SettingsScreen extends Component {
         return (
             <TouchableWithoutFeedback
                 style={{ width: '100%', height: '100%' }}
-                onPress={() => this.hideDropDowns()}
+                onPress={() => { this.hideDropDowns() }}
             >
                 <LinearGradient
                     style={styles.background}
                     colors={['#FFFBF1', '#FFEDC0']}
                 >
                     <View style={styles.settings} >
+                        {/* TEMPERATURE UNIT */}
                         <Text style={[TextStyle.medium, styles.settingLabel]}>Units</Text>
                         <TouchableOpacity
                             onPress={() => {
                                 var isVisible = !this.state.unitOptionsVisible
-                                this.setState({ unitOptionsVisible: isVisible})
+                                this.setState({ unitOptionsVisible: isVisible, timeZoneOptionsVisible: false, })
                             }}
                         >
                             <Text style={styles.settingOption}>{this.state.unit.label}</Text>
                         </TouchableOpacity>
                         <View
-                            onLayout={event => { this.updateLocation(event.nativeEvent.layout) }}
+                            onLayout={event => { this.updateUnitLocation(event.nativeEvent.layout) }}
                             style={styles.underLine}
                         />
 
-                        <Text style={[TextStyle.medium, styles.settingLabel]}>TimeZone</Text>
-                        <TouchableOpacity >
-                            <Text style={styles.settingOption}>{this.state.timeZone.abbr}</Text>
-                        </TouchableOpacity>
-                        <View style={styles.underLine} />
 
+                        {/* TIME ZONE */}
+                        <Text style={[TextStyle.medium, styles.settingLabel]}>Time Zone</Text>
+                        <TextInput
+                            style={styles.settingOption}
+                            ref={input => { this.textInput = input }}
+                            value={this.state.timeZoneOptionsVisible ? this.state.timeZoneSearch : this.state.timeZone.label}
+                            onChangeText={search => this.setState({ timeZoneSearch: search })}
+                            autoFocus={false}
+                            onFocus={() => this.setupTimeZoneSearch()}
+                            clearButtonMode='while-editing'
+                        />
+                        <View
+                            onLayout={event => { this.updateTimeZoneLocation(event.nativeEvent.layout) }}
+                            style={styles.underLine}
+                        />
+
+                        {/* TIME ZONE SWITCH */}
+                        <Text style={[TextStyle.mild, styles.settingLabel, { marginTop: 20 }]}>Filter search results by time zone</Text>
+                        <Switch
+                            style={{ marginTop: 25 }}
+                            value={this.state.filterEnabled}
+                            onValueChange={newValue => this.switchFilterSetting(newValue)}
+                        />
+
+                        {/* DROPDOWNS FOR BOTH TEMP AND TIMEZONE */}
                         <DropDown
                             visible={this.state.unitOptionsVisible}
                             data={settingsHelper.getAvailableUnits()}
                             location={this.state.unitLocation}
                             optionPressed={this.updateUnitSelection}
+                        />
+
+                        <DropDown
+                            visible={this.state.timeZoneOptionsVisible}
+                            data={this.getFilteredTimeZones()}
+                            location={this.state.timeZoneLocation}
+                            optionPressed={this.updateTimeZoneSelection}
                         />
 
                     </View>
@@ -88,9 +128,30 @@ export default class SettingsScreen extends Component {
         )
     }
 
+    switchFilterSetting(newValue) {
+        settingsHelper.setTimeZoneFilter(newValue)
+            .then(result => {
+                this.setState({
+                    filterEnabled: newValue
+                })
+            })
 
-    updateLocation(layout) {
-        var top = layout.y + layout.height * 2
+    }
+
+    getFilteredTimeZones() {
+        return settingsHelper.getTimeZones().filter(zone => zone.label.includes(this.state.timeZoneSearch))
+    }
+
+    setupTimeZoneSearch() {
+        this.setState({
+            timeZoneOptionsVisible: true,
+            unitOptionsVisible: false,
+            timeZoneSearch: this.state.timeZone.label
+        })
+    }
+
+    updateUnitLocation(layout) {
+        var top = layout.y + layout.height
         this.setState({
             unitLocation: {
                 left: layout.x,
@@ -99,9 +160,21 @@ export default class SettingsScreen extends Component {
         })
     }
 
+    updateTimeZoneLocation(layout) {
+        var top = layout.y + layout.height
+        this.setState({
+            timeZoneLocation: {
+                left: layout.x,
+                top: top
+            }
+        })
+    }
+
     hideDropDowns() {
+        Keyboard.dismiss()
         this.setState({
             unitOptionsVisible: false,
+            timeZoneOptionsVisible: false,
         })
     }
 
@@ -111,6 +184,16 @@ export default class SettingsScreen extends Component {
                 this.setState({
                     unit: unit,
                     unitOptionsVisible: false,
+                })
+            })
+    }
+
+    updateTimeZoneSelection(timezone) {
+        settingsHelper.setSavedTimeZone(timezone)
+            .then(storedZone => {
+                this.setState({
+                    timeZone: timezone,
+                    timeZoneOptionsVisible: false,
                 })
             })
     }

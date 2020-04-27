@@ -7,32 +7,30 @@ import { TextStyle } from './Styles';
 export default DropDown = (props) => {
     if (props.visible) {
         return (
-            <View style={{ position: 'absolute', left: props.location.left, top: props.location.top }}>
-                <FlatList
-                    data={props.data}
-                    renderItem={({ item }) => listItem(item, props.optionPressed)}
-                    keyExtractor={item => item.label}
-                />
-            </View>
-        );
+                <View style={{ position: 'absolute', left: props.location.left, top: props.location.top, }}>
+                    <FlatList
+                        data={props.data.slice(0,10)}
+                        renderItem={({ item }) => listItem(item, props.optionPressed)}
+                        keyExtractor={item => item.label}
+                        scrollEnabled={false}
+                    />
+                    { props.data.length > 11 ?
+                        <Text style={[styles.background, {height: 40}]}>
+                        ...
+                        </Text> : <View/>
+                    }
+                </View>
+            );
     } else {
         return (<View></View>)
     }
-}
 
-listItem = (item, optionPressed) => {
-    const listStyles = StyleSheet.create({
-        background: {
-            backgroundColor: 'white',
-            borderColor: 'lightgray',
-            borderWidth: 1,
-            padding: 6,
-            width: 300,
-        }
-    })
 
+};
+
+function listItem(item, optionPressed) {
     return (
-        <View style={listStyles.background}>
+        <View style={styles.background}>
             <TouchableOpacity
                 onPress={() => optionPressed(item)}
             >
@@ -42,8 +40,12 @@ listItem = (item, optionPressed) => {
     )
 }
 
-
-
 const styles = StyleSheet.create({
-
+    background: {
+        backgroundColor: 'white',
+        borderColor: 'lightgray',
+        borderWidth: 1,
+        padding: 6,
+        width: 300,
+    }
 })

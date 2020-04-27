@@ -1,9 +1,10 @@
 import { AsyncStorage } from 'react-native';
 
-import timeZones from './TimeZones';
+import { timeZoneLabels } from './TimeZones';
 
 const unitKey = 'UNIT_KEY';
 const timeZoneKey = 'TIMEZONE_KEY';
+const filterTimeZoneKey = 'FILTER_TIME_ZONE_KEY'
 const availableUnits = [
     { value: 'Imperial', label: 'Fahrenheit' },
     { value: 'Metric', label: 'Celsius' },
@@ -43,7 +44,7 @@ export default class SettingsHelper {
     }
 
     getTimeZones() {
-        return timeones;
+        return timeZoneLabels;
     }
 
     async getSavedTimeZone() {
@@ -66,6 +67,32 @@ export default class SettingsHelper {
     async setSavedTimeZone(timeZone) {
         try {
             await AsyncStorage.setItem(timeZoneKey, JSON.stringify(timeZone))
+        } catch (error) {
+            return
+            // Error saving data
+        }
+    }
+
+    async getTimeZoneFilter() {
+        try {
+            const filterTimeZones = await AsyncStorage.getItem(filterTimeZoneKey)
+            if (filterTimeZones !== null) {
+                return JSON.parse(filterTimeZones)
+            } else {
+                var defaultSetting = false;
+                this.setTimeZoneFilter(defaultSetting)
+                    .then(() => {
+                        return defaultSetting
+                    })
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    async setTimeZoneFilter(isFiltered) {
+        try {
+            await AsyncStorage.setItem(filterTimeZoneKey, JSON.stringify(isFiltered))
         } catch (error) {
             return
             // Error saving data

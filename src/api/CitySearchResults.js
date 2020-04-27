@@ -9,13 +9,15 @@ export default class CitySearchResults {
             var name = GetData(city, 'name')
             var lat = GetData(city, 'lat')
             var lon = GetData(city, 'lon')
+            var timeZone = GetData(city, 'tzs')
 
             if (this.verifyName(name) && this.verifyLat(lat) && this.verifyLon(lon)) {
                 this.cities.push(
                     {
                         name: name,
                         lat: lat,
-                        lon: lon
+                        lon: lon,
+                        timeZone: timeZone,
                     })
             }
         }

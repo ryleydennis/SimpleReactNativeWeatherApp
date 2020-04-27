@@ -1,4 +1,4 @@
-export default timeZones = [
+var timeZones = [
     {
         "abbr": "ACDT",
         "name": "Australian Central Daylight Savings Time",
@@ -1030,3 +1030,579 @@ export default timeZones = [
         "offset": "UTC+05"
     }
 ]
+
+var timeZoneLabels = [
+    {
+        "label": "ACDT"
+    },
+    {
+        "label": "ACST"
+    },
+    {
+        "label": "ACT"
+    },
+    {
+        "label": "ACWST"
+    },
+    {
+        "label": "ADT"
+    },
+    {
+        "label": "AEDT"
+    },
+    {
+        "label": "AEST"
+    },
+    {
+        "label": "AET"
+    },
+    {
+        "label": "AFT"
+    },
+    {
+        "label": "AKDT"
+    },
+    {
+        "label": "AKST"
+    },
+    {
+        "label": "ALMT"
+    },
+    {
+        "label": "AMST"
+    },
+    {
+        "label": "AMT"
+    },
+    {
+        "label": "ANAT"
+    },
+    {
+        "label": "AQTT"
+    },
+    {
+        "label": "ART"
+    },
+    {
+        "label": "AST"
+    },
+    {
+        "label": "AWST"
+    },
+    {
+        "label": "AZOST"
+    },
+    {
+        "label": "AZOT"
+    },
+    {
+        "label": "AZT"
+    },
+    {
+        "label": "BDT"
+    },
+    {
+        "label": "BIOT"
+    },
+    {
+        "label": "BIT"
+    },
+    {
+        "label": "BOT"
+    },
+    {
+        "label": "BRST"
+    },
+    {
+        "label": "BRT"
+    },
+    {
+        "label": "BST"
+    },
+    {
+        "label": "BTT"
+    },
+    {
+        "label": "CAT"
+    },
+    {
+        "label": "CCT"
+    },
+    {
+        "label": "CDT"
+    },
+    {
+        "label": "CEST"
+    },
+    {
+        "label": "CET"
+    },
+    {
+        "label": "CHADT"
+    },
+    {
+        "label": "CHAST"
+    },
+    {
+        "label": "CHOT"
+    },
+    {
+        "label": "CHOST"
+    },
+    {
+        "label": "CHST"
+    },
+    {
+        "label": "CHUT"
+    },
+    {
+        "label": "CIST"
+    },
+    {
+        "label": "CIT"
+    },
+    {
+        "label": "CKT"
+    },
+    {
+        "label": "CLST"
+    },
+    {
+        "label": "CLT"
+    },
+    {
+        "label": "COST"
+    },
+    {
+        "label": "COT"
+    },
+    {
+        "label": "CST"
+    },
+    {
+        "label": "CT"
+    },
+    {
+        "label": "CVT"
+    },
+    {
+        "label": "CWST"
+    },
+    {
+        "label": "CXT"
+    },
+    {
+        "label": "DAVT"
+    },
+    {
+        "label": "DDUT"
+    },
+    {
+        "label": "DFT"
+    },
+    {
+        "label": "EASST"
+    },
+    {
+        "label": "EAST"
+    },
+    {
+        "label": "EAT"
+    },
+    {
+        "label": "ECT"
+    },
+    {
+        "label": "EDT"
+    },
+    {
+        "label": "EEST"
+    },
+    {
+        "label": "EET"
+    },
+    {
+        "label": "EGST"
+    },
+    {
+        "label": "EGT"
+    },
+    {
+        "label": "EIT"
+    },
+    {
+        "label": "EST"
+    },
+    {
+        "label": "FET"
+    },
+    {
+        "label": "FJT"
+    },
+    {
+        "label": "FKST"
+    },
+    {
+        "label": "FKT"
+    },
+    {
+        "label": "FNT"
+    },
+    {
+        "label": "GALT"
+    },
+    {
+        "label": "GAMT"
+    },
+    {
+        "label": "GET"
+    },
+    {
+        "label": "GFT"
+    },
+    {
+        "label": "GILT"
+    },
+    {
+        "label": "GIT"
+    },
+    {
+        "label": "GMT"
+    },
+    {
+        "label": "GST"
+    },
+    {
+        "label": "GYT"
+    },
+    {
+        "label": "HDT"
+    },
+    {
+        "label": "HAEC"
+    },
+    {
+        "label": "HST"
+    },
+    {
+        "label": "HKT"
+    },
+    {
+        "label": "HMT"
+    },
+    {
+        "label": "HOVST"
+    },
+    {
+        "label": "HOVT"
+    },
+    {
+        "label": "ICT"
+    },
+    {
+        "label": "IDLW"
+    },
+    {
+        "label": "IDT"
+    },
+    {
+        "label": "IOT"
+    },
+    {
+        "label": "IRDT"
+    },
+    {
+        "label": "IRKT"
+    },
+    {
+        "label": "IRST"
+    },
+    {
+        "label": "IST"
+    },
+    {
+        "label": "JST"
+    },
+    {
+        "label": "KALT"
+    },
+    {
+        "label": "KGT"
+    },
+    {
+        "label": "KOST"
+    },
+    {
+        "label": "KRAT"
+    },
+    {
+        "label": "KST"
+    },
+    {
+        "label": "LHST"
+    },
+    {
+        "label": "LINT"
+    },
+    {
+        "label": "MAGT"
+    },
+    {
+        "label": "MART"
+    },
+    {
+        "label": "MAWT"
+    },
+    {
+        "label": "MDT"
+    },
+    {
+        "label": "MET"
+    },
+    {
+        "label": "MEST"
+    },
+    {
+        "label": "MHT"
+    },
+    {
+        "label": "MIST"
+    },
+    {
+        "label": "MIT"
+    },
+    {
+        "label": "MMT"
+    },
+    {
+        "label": "MSK"
+    },
+    {
+        "label": "MST"
+    },
+    {
+        "label": "MUT"
+    },
+    {
+        "label": "MVT"
+    },
+    {
+        "label": "MYT"
+    },
+    {
+        "label": "NCT"
+    },
+    {
+        "label": "NDT"
+    },
+    {
+        "label": "NFT"
+    },
+    {
+        "label": "NOVT"
+    },
+    {
+        "label": "NPT"
+    },
+    {
+        "label": "NST"
+    },
+    {
+        "label": "NT"
+    },
+    {
+        "label": "NUT"
+    },
+    {
+        "label": "NZDT"
+    },
+    {
+        "label": "NZST"
+    },
+    {
+        "label": "OMST"
+    },
+    {
+        "label": "ORAT"
+    },
+    {
+        "label": "PDT"
+    },
+    {
+        "label": "PET"
+    },
+    {
+        "label": "PETT"
+    },
+    {
+        "label": "PGT"
+    },
+    {
+        "label": "PHOT"
+    },
+    {
+        "label": "PHT"
+    },
+    {
+        "label": "PKT"
+    },
+    {
+        "label": "PMDT"
+    },
+    {
+        "label": "PMST"
+    },
+    {
+        "label": "PONT"
+    },
+    {
+        "label": "PST"
+    },
+    {
+        "label": "PYST"
+    },
+    {
+        "label": "PYT"
+    },
+    {
+        "label": "RET"
+    },
+    {
+        "label": "ROTT"
+    },
+    {
+        "label": "SAKT"
+    },
+    {
+        "label": "SAMT"
+    },
+    {
+        "label": "SAST"
+    },
+    {
+        "label": "SBT"
+    },
+    {
+        "label": "SCT"
+    },
+    {
+        "label": "SDT"
+    },
+    {
+        "label": "SGT"
+    },
+    {
+        "label": "SLST"
+    },
+    {
+        "label": "SRET"
+    },
+    {
+        "label": "SRT"
+    },
+    {
+        "label": "SST"
+    },
+    {
+        "label": "SYOT"
+    },
+    {
+        "label": "TAHT"
+    },
+    {
+        "label": "THA"
+    },
+    {
+        "label": "TFT"
+    },
+    {
+        "label": "TJT"
+    },
+    {
+        "label": "TKT"
+    },
+    {
+        "label": "TLT"
+    },
+    {
+        "label": "TMT"
+    },
+    {
+        "label": "TRT"
+    },
+    {
+        "label": "TOT"
+    },
+    {
+        "label": "TVT"
+    },
+    {
+        "label": "ULAST"
+    },
+    {
+        "label": "ULAT"
+    },
+    {
+        "label": "UTC"
+    },
+    {
+        "label": "UYST"
+    },
+    {
+        "label": "UYT"
+    },
+    {
+        "label": "UZT"
+    },
+    {
+        "label": "VET"
+    },
+    {
+        "label": "VLAT"
+    },
+    {
+        "label": "VOLT"
+    },
+    {
+        "label": "VOST"
+    },
+    {
+        "label": "VUT"
+    },
+    {
+        "label": "WAKT"
+    },
+    {
+        "label": "WAST"
+    },
+    {
+        "label": "WAT"
+    },
+    {
+        "label": "WEST"
+    },
+    {
+        "label": "WET"
+    },
+    {
+        "label": "WIT"
+    },
+    {
+        "label": "WGST"
+    },
+    {
+        "label": "WGT"
+    },
+    {
+        "label": "WST"
+    },
+    {
+        "label": "YAKT"
+    },
+    {
+        "label": "YEKT"
+    }
+]
+
+
+export { timeZones, timeZoneLabels }
