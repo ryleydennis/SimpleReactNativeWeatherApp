@@ -149,7 +149,6 @@ export default class SearchScreen extends Component {
             })
         settingsHelper.getTimeZoneFilter()
             .then(isFilterEnabled => {
-                console.log(isFilterEnabled)
                 this.setState({
                     filterEnabled: isFilterEnabled,
                 })

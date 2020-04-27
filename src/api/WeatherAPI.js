@@ -3,12 +3,12 @@ import Weather from './Weather';
 import HourlyWeather from './HourlyWeather';
 
 export default class WeatherAPI {
-    static fetchWeatherData(city, context, callback) {
+    static fetchWeatherData(city, context, callback, units) {
         var url = new URL('https://community-open-weather-map.p.rapidapi.com/weather');
         var params = {
             lat: city.lat,
             lon: city.lon,
-            units: 'imperial',
+            units: units.value,
         }
         Object.keys(params).forEach(key => url.searchParams.append(key, params[key]))
 
@@ -22,7 +22,7 @@ export default class WeatherAPI {
         })
             .then(response => response.json())
             .then(data => {
-                var weather = new Weather(data)
+                var weather = new Weather(data, units)
                 callback(true, context, weather)
             })
             .catch(err => {
@@ -31,13 +31,13 @@ export default class WeatherAPI {
             });
     }
 
-    static fetchWeatherForecast(city, context, callback) {
+    static fetchWeatherForecast(city, context, callback, units) {
         const count = 7
         var url = new URL('https://community-open-weather-map.p.rapidapi.com/forecast/daily');
         var params = {
             lat: city.lat,
             lon: city.lon,
-            units: 'imperial',
+            units: units.value,
             cnt: 7,
         }
         Object.keys(params).forEach(key => url.searchParams.append(key, params[key]))
@@ -60,12 +60,12 @@ export default class WeatherAPI {
             });
     }
 
-    static fetchHourlyForecast(city, context, callback) {
+    static fetchHourlyForecast(city, context, callback, units) {
         var url = new URL('https://community-open-weather-map.p.rapidapi.com/forecast')
         var params = {
             lat: city.lat,
             lon: city.lon,
-            units: 'imperial',
+            units: units.value,
 
         }
         Object.keys(params).forEach(key => url.searchParams.append(key, params[key]))

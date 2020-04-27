@@ -49,7 +49,7 @@ export default class SummaryCard extends Component {
                     <View style={{ width: '70%', height: 0.75, backgroundColor: '#494949', marginTop: 3 }} />
                     <View style={{ width: '100%', flexDirection: 'row', marginTop: 10, justifyContent: "space-between" }}>
                         <View>
-                            <Text style={TextStyle.large}>{weather.temp + 'F'}</Text>
+                            <Text style={TextStyle.large}>{weather.temp + weather.unit.abbr}</Text>
                             <Text style={TextStyle.mild}>{'feels like ' + weather.feelsLike}</Text>
                             <Text style={TextStyle.medium}>{weather.hi + '↑ ·' + ' ' + weather.lo + '↓'}</Text>
                         </View>

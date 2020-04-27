@@ -10,6 +10,7 @@ import HourlyTempCard from '../cards/HourlyTempCard.js';
 import Forecast from '../api/Forecast';
 import Weather from '../api/Weather';
 import HourlyWeather from '../api/HourlyWeather';
+import SettingsHelper from '../AsyncStorageHelpers/SettingsStorageHelper';
 
 export default class HomeScreen extends Component {
   constructor(props) {
@@ -22,6 +23,7 @@ export default class HomeScreen extends Component {
       refreshingForecast: true,
       refreshingHourly: true,
       city: props.route.params.city,
+      unit: '',
     };
 
     this.fetchWeatherData()
@@ -59,11 +61,15 @@ export default class HomeScreen extends Component {
     this.fetchWeatherData()
   }
 
-  fetchWeatherData() {
+  async fetchWeatherData() {
+    if (this.state.unit == '') {
+      var unit = await new SettingsHelper().getSavedUnit()
+      this.setState({unit: unit})
+    } 
     if (this.state.city != null) {
-      WeatherAPI.fetchWeatherData(this.state.city, this, this.fetchWeatherCallback);
-      WeatherAPI.fetchWeatherForecast(this.state.city, this, this.fetchForecastCallback);
-      WeatherAPI.fetchHourlyForecast(this.state.city, this, this.fetchHourlyCallback);
+      WeatherAPI.fetchWeatherData(this.state.city, this, this.fetchWeatherCallback, this.state.unit);
+      WeatherAPI.fetchWeatherForecast(this.state.city, this, this.fetchForecastCallback, this.state.unit);
+      WeatherAPI.fetchHourlyForecast(this.state.city, this, this.fetchHourlyCallback, this.state.unit);
     }
   }
 
