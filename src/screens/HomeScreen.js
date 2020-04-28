@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { StyleSheet, View, Image, Text, FlatList, Animated } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { connect } from 'react-redux'
 
 import WeatherAPI from '../api/WeatherAPI';
 import SummaryCard from '../cards/SummaryCard.js';
@@ -11,8 +12,9 @@ import Forecast from '../api/Forecast';
 import Weather from '../api/Weather';
 import HourlyWeather from '../api/HourlyWeather';
 import SettingsHelper from '../AsyncStorageHelpers/SettingsStorageHelper';
+import { setWeatherSummary } from '../actions';
 
-export default class HomeScreen extends Component {
+class HomeScreen extends Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -25,8 +27,6 @@ export default class HomeScreen extends Component {
       city: props.route.params.city,
       unit: '',
     };
-
-    this.fetchWeatherData()
   }
 
   render() {
@@ -97,6 +97,7 @@ export default class HomeScreen extends Component {
         refreshingTodaysWeather: false,
         weatherData: data
       });
+      setWeatherSummary(data)
     } else {
       context.setState({
         refreshingTodaysWeather: false,
@@ -131,6 +132,14 @@ export default class HomeScreen extends Component {
   }
 }
 
+const mapStateToProps = state => ({
+  weatherSummary: state.weatherSummary
+})
+
+const mapDispatchToProps = dispatch => ({
+  setWeatherSummary: weatherSummary => dispatch(setWeatherSummary(weatherSummary))
+})
+
 const styles = StyleSheet.create({
   container: {
     justifyContent: 'flex-start',
@@ -154,3 +163,5 @@ const styles = StyleSheet.create({
     height: 100
   }
 });
+
+export default connect(mapStateToProps, mapDispatchToProps)(HomeScreen)

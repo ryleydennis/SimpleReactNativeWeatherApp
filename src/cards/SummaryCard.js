@@ -3,11 +3,12 @@ import { View, StyleSheet, Text, Image, AsyncStorage } from 'react-native';
 import { ViewStyle, TextStyle } from '../Styles'
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import { connect } from 'react-redux'
 
 import FavoritesHelper from '../AsyncStorageHelpers/FavoritesStorageHelper'
 
 const favoritesHelper = new FavoritesHelper();
-export default class SummaryCard extends Component {
+class SummaryCard extends Component {
     constructor(props) {
         super(props)
         this.state = {
@@ -73,6 +74,10 @@ export default class SummaryCard extends Component {
     }
 }
 
+const mapStateToProps = state => ({
+    weatherSummary: state.weatherSummary
+})
+
 const styles = StyleSheet.create({
     summaryCard: {
         paddingTop: 10,
@@ -129,3 +134,5 @@ var getTimeStamp = function () {
 
     return (dateStamp + ' ' + timeStamp)
 }
+
+export default connect(mapStateToProps)(SummaryCard)

@@ -3,7 +3,7 @@ import { View, Text, TextInput, StyleSheet, TouchableOpacity, FlatList } from 'r
 
 import { LinearGradient } from 'expo-linear-gradient';
 import { Feather, FontAwesome, Octicons } from 'react-native-vector-icons';
-import Styles, { ViewStyle, TextStyle } from '../Styles';
+import { ViewStyle, TextStyle } from '../Styles';
 import CitySearchAPI from '../api/CitySearchAPI';
 import FavoritesHelper from '../AsyncStorageHelpers/FavoritesStorageHelper'
 import SettingsHelper from '../AsyncStorageHelpers/SettingsStorageHelper';
@@ -29,9 +29,13 @@ export default class SearchScreen extends Component {
 
         this.refreshAsyncData = this.refreshAsyncData.bind(this)
         this.refreshAsyncData()
-
     }
     componentDidMount() {
+        this.setState({
+            cities: [],
+            filteredCities: [],
+            userInput: '',
+        })
         this._unsubscribe = this.state.navigation.addListener('focus', () => {
             this.refreshAsyncData()
         });
@@ -136,9 +140,9 @@ export default class SearchScreen extends Component {
 
     refreshAsyncData() {
         favoritesHelper.getFavorites()
-        .then(favorites => {
-            this.setState({
-                favorites: favorites,
+            .then(favorites => {
+                this.setState({
+                    favorites: favorites,
                 })
             })
         settingsHelper.getSavedTimeZone()
@@ -196,8 +200,6 @@ export default class SearchScreen extends Component {
         )
     }
 }
-
-
 
 const cityCardStyles = StyleSheet.create({
     cityName: {
