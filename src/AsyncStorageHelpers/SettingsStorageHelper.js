@@ -53,7 +53,7 @@ export default class SettingsHelper {
             if (savedTimeZoneJSON !== null) {
                 return JSON.parse(savedTimeZoneJSON)
             } else {
-                var defaultZone = timeZones[75]
+                var defaultZone = this.getTimeZones()[75]
                 this.setSavedTimeZone(defaultZone)
                     .then(() => {
                         return defaultZone

@@ -27,6 +27,8 @@ class HomeScreen extends Component {
       city: props.route.params.city,
       unit: '',
     };
+
+    this.refreshScreen()
   }
 
   render() {
