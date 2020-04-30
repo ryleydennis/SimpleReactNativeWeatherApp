@@ -1,17 +1,19 @@
 import React, { Component, useState } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
-
+import { connect } from 'react-redux'
 import { LinearGradient } from 'expo-linear-gradient';
 import { Feather, FontAwesome, Octicons } from 'react-native-vector-icons';
+
 import { ViewStyle, TextStyle } from '../Styles';
 import CitySearchAPI from '../api/CitySearchAPI';
 import FavoritesHelper from '../AsyncStorageHelpers/FavoritesStorageHelper'
 import SettingsHelper from '../AsyncStorageHelpers/SettingsStorageHelper';
+import {setCity} from '../actions'
 
 
 const favoritesHelper = new FavoritesHelper();
 const settingsHelper = new SettingsHelper();
-export default class SearchScreen extends Component {
+class SearchScreen extends Component {
     constructor(props) {
         super(props)
         this.state = {
@@ -167,6 +169,9 @@ export default class SearchScreen extends Component {
             <TouchableOpacity
                 activeOpacity={0.5}
                 onPress={() => {
+
+                    this.props.setCity(city)
+                    
                     this.textInput.clear()
                     this.setState({
                         cities: []
@@ -200,6 +205,14 @@ export default class SearchScreen extends Component {
         )
     }
 }
+
+const mapStateToProps = state => ({
+    city: state.city,
+})
+
+const mapDispatchToProps = dispatch => ({
+    setCity: city => dispatch(setCity(city)),
+})
 
 const cityCardStyles = StyleSheet.create({
     cityName: {
@@ -261,3 +274,5 @@ const styles = StyleSheet.create({
         width: '100%',
     }
 })
+
+export default connect(mapStateToProps, mapDispatchToProps)(SearchScreen)

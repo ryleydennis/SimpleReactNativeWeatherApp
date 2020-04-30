@@ -1,17 +1,23 @@
+import { connect } from 'react-redux'
+
 import Forecast from "./Forecast";
 import Weather from './Weather';
 import HourlyWeather from './HourlyWeather';
+import { setWeatherSummary } from '../actions'
 
-export default class WeatherAPI {
-    static fetchWeatherData(city, context, callback, units) {
+
+class WeatherAPI {
+
+    
+
+    static fetchWeatherData() {
         var url = new URL('https://community-open-weather-map.p.rapidapi.com/weather');
         var params = {
-            lat: city.lat,
-            lon: city.lon,
-            units: units.value,
+            lat: props.city.lat,
+            lon: props.city.lon,
+            units: props.units.value,
         }
         Object.keys(params).forEach(key => url.searchParams.append(key, params[key]))
-
 
         fetch(url, {
             "method": "GET",
@@ -22,12 +28,11 @@ export default class WeatherAPI {
         })
             .then(response => response.json())
             .then(data => {
-                var weather = new Weather(data, units)
-                callback(true, context, weather)
+                var weather = new Weather(data, props.units)
+                props.setWeatherSummary(weather)
             })
             .catch(err => {
                 console.log(err);
-                callback(false, context)
             });
     }
 
@@ -88,3 +93,18 @@ export default class WeatherAPI {
             });
     }
 }
+
+const mapStateToProps = state => ({
+    city: state.city,
+    units: state.unit
+})
+
+
+const mapDispatchToProps = dispatch => ({
+    setWeatherSummary: weather => dispatch(setWeatherSummary(weather))
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(WeatherAPI)
+
+
+

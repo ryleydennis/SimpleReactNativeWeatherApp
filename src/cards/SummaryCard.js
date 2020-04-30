@@ -23,10 +23,9 @@ class SummaryCard extends Component {
             })
         })
     };
-
-
+    
+    
     render() {
-
         var weather = this.state.weatherData;
         return (
             <View style={ViewStyle.card}>
@@ -136,3 +135,5 @@ var getTimeStamp = function () {
 }
 
 export default connect(mapStateToProps)(SummaryCard)
+ 
+// export default (SummaryCard)

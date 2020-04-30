@@ -1,5 +1,6 @@
 export default class Weather {
-    constructor(weatherData) {        
+    constructor(weatherData) {
+ 
         var list = this.getData(weatherData, 'list')
         this.timeStamps = []
         this.temps = []

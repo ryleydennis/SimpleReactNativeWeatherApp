@@ -1,7 +1,11 @@
 export default class Weather {
     constructor(weatherData, unit) {
         this.name = this.getData(weatherData, 'name')
-        this.unit = unit
+
+        this.unit = {}
+        this.unit.abbr = this.getData(unit, 'abbr')
+        this.unit.label = this.getData(unit, 'label')
+        this.unit.value = this.getData(unit, 'value')
         
         var weather = weatherData != null && weatherData.weather != null && weatherData.weather[0] != null ? weatherData.weather[0] : null
         this.id = this.getData(weather, 'id', '-' )

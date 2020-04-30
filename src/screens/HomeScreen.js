@@ -3,27 +3,22 @@ import { StyleSheet, View, Image, Text, FlatList, Animated } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient';
 import { connect } from 'react-redux'
 
-import WeatherAPI from '../api/WeatherAPI';
+import {fetchForecastData, fetchSummaryData, fetchHourlyData} from '../api/FetchWeatherAPI';
+import SampleWeatherAPI from '../api/SampleWeatherAPI';
 import SummaryCard from '../cards/SummaryCard.js';
 import WeatherInfoCard from '../cards/WeatherInfoCard.js';
 import WeatherForecastCard from '../cards/WeatherForecastCard'
 import HourlyTempCard from '../cards/HourlyTempCard.js';
-import Forecast from '../api/Forecast';
-import Weather from '../api/Weather';
-import HourlyWeather from '../api/HourlyWeather';
 import SettingsHelper from '../AsyncStorageHelpers/SettingsStorageHelper';
-import { setWeatherSummary } from '../actions';
+import { setWeatherSummary, setWeatherForecast, setWeatherHourly, setUnit } from '../actions'
 
 class HomeScreen extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      weatherData: new Weather(),
-      forecastData: new Forecast(),
-      hourlyData: new HourlyWeather(),
-      refreshingTodaysWeather: true,
-      refreshingForecast: true,
-      refreshingHourly: true,
+      refreshingTodaysWeather: false,
+      refreshingForecast: false,
+      refreshingHourly: false,
       city: props.route.params.city,
       unit: '',
     };
@@ -60,18 +55,19 @@ class HomeScreen extends Component {
       refreshingForecast: true,
       refreshingHourly: true,
     });
-    this.fetchWeatherData()
+
+      this.fetchWeatherData()
   }
 
   async fetchWeatherData() {
-    if (this.state.unit == '') {
+    if (this.props.unit.label === undefined) {
       var unit = await new SettingsHelper().getSavedUnit()
-      this.setState({unit: unit})
+      this.props.setUnit(unit)
     } 
     if (this.state.city != null) {
-      WeatherAPI.fetchWeatherData(this.state.city, this, this.fetchWeatherCallback, this.state.unit);
-      WeatherAPI.fetchWeatherForecast(this.state.city, this, this.fetchForecastCallback, this.state.unit);
-      WeatherAPI.fetchHourlyForecast(this.state.city, this, this.fetchHourlyCallback, this.state.unit);
+      fetchSummaryData(this.props.city, this.props.unit, this.props.setWeatherSummary)
+      // fetchForecastData(this.props.city, this.props.units, this.props.setWeatherForecast)
+      // fetchHourlyData(this.props.city, this.props.unit, this.props.setWeatherHourly)
     }
   }
 
@@ -82,11 +78,11 @@ class HomeScreen extends Component {
       ]
     } else {
       return [
-        { id: '1', layout: <SummaryCard style={styles.cardColumn} weatherData={this.state.weatherData} city={this.state.city}/> },
-        { id: '2', layout: <WeatherInfoCard style={styles.cardColumn} weatherData={this.state.weatherData} /> },
-        { id: '3', layout: <HourlyTempCard style={styles.cardColumn} hourlyData={this.state.hourlyData} /> },
-        { id: '4', layout: <WeatherForecastCard style={styles.cardColumn} forecastData={this.state.forecastData} /> },
-        { id: '5', layout: <View style={styles.listSpacer} /> }
+        { id: '1', layout: <SummaryCard style={styles.cardColumn}/> },
+        // { id: '2', layout: <WeatherInfoCard style={styles.cardColumn} weatherData={this.props.weatherSummary} /> },
+        // { id: '3', layout: <HourlyTempCard style={styles.cardColumn} hourlyData={this.props.weatherHourly} /> },
+        // { id: '4', layout: <WeatherForecastCard style={styles.cardColumn} forecastData={this.props.weatherForecast} /> },
+        // { id: '5', layout: <View style={styles.listSpacer} /> }
       ]
     }
   }
@@ -99,7 +95,7 @@ class HomeScreen extends Component {
         refreshingTodaysWeather: false,
         weatherData: data
       });
-      setWeatherSummary(data)
+      context.state.setSummary(data)
     } else {
       context.setState({
         refreshingTodaysWeather: false,
@@ -135,11 +131,15 @@ class HomeScreen extends Component {
 }
 
 const mapStateToProps = state => ({
-  weatherSummary: state.weatherSummary
+  city: state.city,
+  unit: state.unit
 })
 
 const mapDispatchToProps = dispatch => ({
-  setWeatherSummary: weatherSummary => dispatch(setWeatherSummary(weatherSummary))
+  setUnit: unit => dispatch(setUnit(unit)),
+  setWeatherSummary: weather => dispatch(setWeatherSummary(weather)),
+  setWeatherForecast: forecast => dispatch(setWeatherForecast(forecast)),
+  setWeatherHourly: hourly => dispatch(setWeatherHourly(hourly))
 })
 
 const styles = StyleSheet.create({

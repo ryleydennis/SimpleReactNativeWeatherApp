@@ -12,7 +12,6 @@ const weatherSummary = (state = new Weather(), action) => {
         default:
             return state
     }
-    return state
 }
 
 const weatherForecast = (state = new Forecast(), action) => {
@@ -22,7 +21,6 @@ const weatherForecast = (state = new Forecast(), action) => {
         default:
             return state
     }
-    return state
 }
 
 const weatherHourly = (state = new Hourly(), action) => {
@@ -32,7 +30,6 @@ const weatherHourly = (state = new Hourly(), action) => {
         default:
             return state
     }
-    return state
 }
 
 export { weatherSummary, weatherForecast, weatherHourly }
