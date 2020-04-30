@@ -65,8 +65,6 @@ const mapStateToProps = state => ({
     city: state.city,
 })
 
-
-
 const styles = StyleSheet.create({
     summaryCard: {
         paddingTop: 10,

@@ -16,9 +16,9 @@ class HomeScreen extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      refreshingTodaysWeather: false,
-      refreshingForecast: false,
-      refreshingHourly: false,
+      refreshingTodaysWeather: true,
+      refreshingForecast: true,
+      refreshingHourly: true,
       city: props.route.params.city,
       unit: '',
     };
@@ -66,8 +66,8 @@ class HomeScreen extends Component {
     } 
     if (this.state.city != null) {
       fetchSummaryData(this.props.city, this.props.unit, this.props.setWeatherSummary)
-      // fetchForecastData(this.props.city, this.props.units, this.props.setWeatherForecast)
-      // fetchHourlyData(this.props.city, this.props.unit, this.props.setWeatherHourly)
+      fetchForecastData(this.props.city, this.props.units, this.props.setWeatherForecast)
+      fetchHourlyData(this.props.city, this.props.unit, this.props.setWeatherHourly)
     }
   }
 
@@ -78,8 +78,8 @@ class HomeScreen extends Component {
       ]
     } else {
       return [
-        { id: '1', layout: <SummaryCard style={styles.cardColumn}/> },
-        // { id: '2', layout: <WeatherInfoCard style={styles.cardColumn} weatherData={this.props.weatherSummary} /> },
+        { id: '1', layout: <SummaryCard style={styles.cardColumn} /> },
+        { id: '2', layout: <WeatherInfoCard style={styles.cardColumn} /> },
         // { id: '3', layout: <HourlyTempCard style={styles.cardColumn} hourlyData={this.props.weatherHourly} /> },
         // { id: '4', layout: <WeatherForecastCard style={styles.cardColumn} forecastData={this.props.weatherForecast} /> },
         // { id: '5', layout: <View style={styles.listSpacer} /> }

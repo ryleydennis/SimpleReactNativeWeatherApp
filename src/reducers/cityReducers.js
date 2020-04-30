@@ -9,7 +9,7 @@ const city = (state = {}, action) => {
     }
 }
 
-const unit = (state = {}, action) => {
+const unit = (state = {'abbr':''}, action) => {
     switch(action.type) {
         case SET_TEMP_UNIT: 
             return action.payload
