@@ -29,7 +29,7 @@ export default class FavoritesHelper {
         }
     }
 
-    setFavorites(isFavorite, city, context, callback) {
+    setFavorites(isFavorite, city, callback) {
         AsyncStorage.getItem(favoritesKey)
             .then(favoritesJSON => {
                 var favorites = JSON.parse(favoritesJSON)
@@ -41,7 +41,7 @@ export default class FavoritesHelper {
                 favorites = (isFavorite ? this.addToFavorites(city, favorites) : this.removeFromFavorites(city, favorites))
                 this.saveFavorites(favorites)
                     .then(() => {
-                        callback(context, isFavorite)
+                        callback(isFavorite)
                     })
             })
     }

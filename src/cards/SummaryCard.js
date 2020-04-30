@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, useEffect, useState } from 'react';
 import { View, StyleSheet, Text, Image, AsyncStorage } from 'react-native';
 import { ViewStyle, TextStyle } from '../Styles'
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -8,74 +8,64 @@ import { connect } from 'react-redux'
 import FavoritesHelper from '../AsyncStorageHelpers/FavoritesStorageHelper'
 
 const favoritesHelper = new FavoritesHelper();
-class SummaryCard extends Component {
-    constructor(props) {
-        super(props)
-        this.state = {
-            weatherData: props.weatherData,
-            city: props.city,
-            isFavorite: false,
-        };
 
-        favoritesHelper.checkIfFavorite(this.state.city).then(isFavorite => {
-            this.setState({
-                isFavorite: isFavorite,
-            })
+SummaryCard = ({weather, city}) => {
+
+    const [isFavorite, setFavorite] = useState(false)
+    
+    useEffect(() => {
+        favoritesHelper.checkIfFavorite(city).then(isFavorite => {
+            setFavorite(isFavorite)
         })
-    };
-    
-    
-    render() {
-        var weather = this.state.weatherData;
-        return (
-            <View style={ViewStyle.card}>
-                <View style={styles.summaryCard}>
-                    <View style={{ flexDirection: 'row' }}>
-                        <Text style={[TextStyle.title, { flexGrow: 1 }]}>{weather.name}</Text>
-                        <TouchableOpacity
-                            style={{ margin: 6, }}
-                            onPress={() => {
-                                favoritesHelper.setFavorites(!this.state.isFavorite, this.state.city, this, this.updatedFavoriteCallback)
-                            }}
-                        >
-                            <Icon
-                                name={this.state.isFavorite ? "star" : "star-o"}
-                                color={this.state.isFavorite ? 'gold' : '#494949'}
-                                size={25}
-                            />
-                        </TouchableOpacity>
+    })
+
+    return (
+        <View style={ViewStyle.card}>
+            <View style={styles.summaryCard}>
+                <View style={{ flexDirection: 'row' }}>
+                    <Text style={[TextStyle.title, { flexGrow: 1 }]}>{weather.name}</Text>
+                    <TouchableOpacity
+                        style={{ margin: 6, }}
+                        onPress={() => {
+                            favoritesHelper.setFavorites(!isFavorite, city, (isFavorite => {
+                                setFavorite(isFavorite)
+                            }))
+                        }}
+                    >
+                        <Icon
+                            name={isFavorite ? "star" : "star-o"}
+                            color={isFavorite ? 'gold' : '#494949'}
+                            size={25}
+                        />
+                    </TouchableOpacity>
+                </View>
+                <Text style={TextStyle.mild}>{getTimeStamp()}</Text>
+                <View style={{ width: '70%', height: 0.75, backgroundColor: '#494949', marginTop: 3 }} />
+                <View style={{ width: '100%', flexDirection: 'row', marginTop: 10, justifyContent: "space-between" }}>
+                    <View>
+                        <Text style={TextStyle.large}>{weather.temp + weather.unit.abbr}</Text>
+                        <Text style={TextStyle.mild}>{'feels like ' + weather.feelsLike}</Text>
+                        <Text style={TextStyle.medium}>{weather.hi + '↑ ·' + ' ' + weather.lo + '↓'}</Text>
                     </View>
-                    <Text style={TextStyle.mild}>{getTimeStamp()}</Text>
-                    <View style={{ width: '70%', height: 0.75, backgroundColor: '#494949', marginTop: 3 }} />
-                    <View style={{ width: '100%', flexDirection: 'row', marginTop: 10, justifyContent: "space-between" }}>
-                        <View>
-                            <Text style={TextStyle.large}>{weather.temp + weather.unit.abbr}</Text>
-                            <Text style={TextStyle.mild}>{'feels like ' + weather.feelsLike}</Text>
-                            <Text style={TextStyle.medium}>{weather.hi + '↑ ·' + ' ' + weather.lo + '↓'}</Text>
-                        </View>
-                        <View style={{ alignItems: 'center' }}>
-                            <Image
-                                style={styles.image}
-                                source={{ uri: weather.getIcon() }}
-                            />
-                            <Text style={TextStyle.mild}>{weather.description}</Text>
-                        </View>
+                    <View style={{ alignItems: 'center' }}>
+                        <Image
+                            style={styles.image}
+                            source={{ uri: weather.getIcon() }}
+                        />
+                        <Text style={TextStyle.mild}>{weather.description}</Text>
                     </View>
                 </View>
             </View>
-        )
-    }
-
-    updatedFavoriteCallback(context, isFavorite){
-        context.setState({
-            isFavorite: isFavorite
-        })
-    }
+        </View>
+    )
 }
 
 const mapStateToProps = state => ({
-    weatherSummary: state.weatherSummary
+    weather: state.weatherSummary,
+    city: state.city,
 })
+
+
 
 const styles = StyleSheet.create({
     summaryCard: {
@@ -135,5 +125,3 @@ var getTimeStamp = function () {
 }
 
 export default connect(mapStateToProps)(SummaryCard)
- 
-// export default (SummaryCard)
