@@ -1,82 +1,80 @@
-const placeHolder = "-"
+const placeHolder = '-';
 
 export default class Forecast {
-    constructor(forecastData) {
-        this.days = []
+  constructor(forecastData) {
+    this.days = [];
 
-        for(let i = 0; i < this.days.length; i++) {
-            this.days[i] = new DayWeather()
-        }
-
-        if (forecastData !== undefined) {
-            var forecast = Array.isArray(forecastData) ? forecastData[0] : forecastData
-            var unparsedDays = this.getData(forecast, 'list')
-            if (Array.isArray(unparsedDays) && unparsedDays.length > 0) {
-                for(let i = 0; i < unparsedDays.length; i++) {
-                    this.days[i] = new DayWeather(unparsedDays[i], i)
-                }
-            }       
-        }
+    for (let i = 0; i < this.days.length; i += 1) {
+      this.days[i] = new DayWeather();
     }
 
-    getData(parent, child, suffix, decimalPlace) {
-        var data = ""
-    
-        if (parent != null && parent[child] != null) {
-            data = parent[child];
-    
-            if (decimalPlace != null) {
-                data = data.toFixed(decimalPlace);
-            }
-        } else {
-            data = placeHolder
+    if (forecastData !== undefined) {
+      const forecast = Array.isArray(forecastData) ? forecastData[0] : forecastData;
+      const unparsedDays = this.getData(forecast, 'list');
+      if (Array.isArray(unparsedDays) && unparsedDays.length > 0) {
+        for (let i = 0; i < unparsedDays.length; i += 1) {
+          this.days[i] = new DayWeather(unparsedDays[i], i);
         }
-    
-        if (suffix != null) {
-            data = data + suffix;
-        }
-    
-        return data
+      }
     }
+  }
+
+  static getData(parent, child, suffix, decimalPlace) {
+    var data = '';
+
+    if (parent != null && parent[child] != null) {
+      data = parent[child];
+
+      if (decimalPlace != null) {
+        data = data.toFixed(decimalPlace);
+      }
+    } else {
+      data = placeHolder;
+    }
+
+    if (suffix != null) {
+      data += suffix;
+    }
+
+    return data;
+  }
 }
 
-export class DayWeather {
-    constructor(rawDay, index) {
-        this.index = index
-        this._temp = this.getData(rawDay, 'temp')
+const DayWeather = (rawDay, index) => {
+  this.index = index;
+  this._temp = this.getData(rawDay, 'temp');
 
-        this.lo = this.getData(this._temp, 'min', '°', '-')
-        this.hi = this.getData(this._temp, 'max', '°', '-')
+  this.lo = getData(this._temp, 'min', '°', '-');
+  this.hi = this.getData(this._temp, 'max', '°', '-');
 
-        this._weather = rawDay != null && rawDay.weather[0] != null ? rawDay.weather[0] : null
-        this.description = this.getData(this._weather, 'description')
-        this.icon = this.getData(this._weather, 'icon')
+  this._weather = rawDay != null && rawDay.weather[0] != null ? rawDay.weather[0] : null;
+  this.description = this.getData(this._weather, 'description');
+  this.icon = this.getData(this._weather, 'icon');
+
+  function getIcon() {
+    if (this.icon === '') {
+      return '';
     }
+    return `https://openweathermap.org/img/wn/${this.icon}@2x.png`;
+  }
+};
 
-    getData(parent, child, suffix, decimalPlace) {
-        var data = ""
-    
-        if (parent != null && parent[child] != null) {
-            data = parent[child];
-    
-            if (decimalPlace != null) {
-                data = data.toFixed(decimalPlace);
-            }
-        } else {
-            data = placeHolder
-        }
-    
-        if (suffix != null) {
-            data = data + suffix;
-        }
-    
-        return data
-    }
+function getData(parent, child, suffix, decimalPlace) {
+  var data = '';
 
-    getIcon() {
-        if (this.icon == '') {
-            return ""
-        }
-        return "https://openweathermap.org/img/wn/" + this.icon + "@2x.png"
+  if (parent != null && parent[child] != null) {
+    data = parent[child];
+
+    if (decimalPlace != null) {
+      data = data.toFixed(decimalPlace);
     }
+  } else {
+    data = placeHolder;
+  }
+
+  if (suffix != null) {
+    data += suffix;
+  }
+
+  return data;
 }

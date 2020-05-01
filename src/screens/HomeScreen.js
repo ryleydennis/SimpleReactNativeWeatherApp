@@ -50,6 +50,16 @@ class HomeScreen extends Component {
     );
   }
 
+  refreshScreen() {
+    this.setState({
+      refreshingTodaysWeather: true,
+      refreshingForecast: true,
+      refreshingHourly: true,
+    })
+
+    this.fetchWeatherData()
+  }
+
   async fetchWeatherData() {
     // console.log(this.props)
     if (this.props.unit.value === undefined || this.props.unit.value == '') {
@@ -76,8 +86,8 @@ class HomeScreen extends Component {
         { id: '1', layout: <SummaryCard style={styles.cardColumn} /> },
         { id: '2', layout: <WeatherInfoCard style={styles.cardColumn} /> },
         { id: '3', layout: <HourlyTempCard style={styles.cardColumn} /> },
-        // { id: '4', layout: <WeatherForecastCard style={styles.cardColumn} forecastData={this.props.weatherForecast} /> },
-        // { id: '5', layout: <View style={styles.listSpacer} /> }
+        { id: '4', layout: <WeatherForecastCard style={styles.cardColumn} /> },
+        { id: '5', layout: <View style={styles.listSpacer} /> }
       ]
     }
   }
@@ -91,7 +101,6 @@ class HomeScreen extends Component {
   
   fetchHourlyCallback(data) {
     this.props.setWeatherHourly(data)
-    console.log(data)
     this.setState({
       refreshingHourly: false
     });

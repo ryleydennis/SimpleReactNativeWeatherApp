@@ -1,19 +1,19 @@
-export function GetData(parent, child, suffix, decimalPlace) {
-    var data = ""
+export default function GetData(parent, child, suffix, decimalPlace) {
+  var data = '';
 
-    if (parent != null && parent[child] != null) {
-        data = parent[child];
+  if (parent != null && parent[child] != null) {
+    data = parent[child];
 
-        if (decimalPlace != null) {
-            data = data.toFixed(decimalPlace);
-        }
-    } else {
-        data = ''
+    if (decimalPlace != null) {
+      data = data.toFixed(decimalPlace);
     }
+  } else {
+    data = '';
+  }
 
-    if (suffix != null) {
-        data = data + suffix;
-    }
+  if (suffix != null) {
+    data += suffix;
+  }
 
-    return data
+  return data;
 }
