@@ -68,11 +68,14 @@ export default class FavoritesHelper {
   }
 
   static checkFavoritesForCity(favorites, city) {
-    favorites.array.forEach((favorite) => {
-      if (favorite.name === city.name) {
-        return true;
-      }
-    });
+    if (favorites !== undefined && favorites.length !== 0) {
+      // eslint-disable-next-line consistent-return
+      favorites.forEach((favorite) => {
+        if (favorite.name === city.name) {
+          return true;
+        }
+      });
+    }
     return false;
   }
 

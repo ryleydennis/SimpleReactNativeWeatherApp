@@ -1,5 +1,5 @@
-export default function GetData(parent, child, suffix, decimalPlace) {
-  var data = '';
+export default function GetData(parent, child, placeHolder = '', suffix, decimalPlace) {
+  var data = placeHolder;
 
   if (parent != null && parent[child] != null) {
     data = parent[child];

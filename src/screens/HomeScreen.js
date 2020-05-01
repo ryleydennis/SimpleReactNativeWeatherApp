@@ -34,10 +34,10 @@ class HomeScreen extends Component {
     }
     return [
       { id: '1', layout: <SummaryCard style={styles.cardColumn} /> },
-      { id: '2', layout: <WeatherInfoCard style={styles.cardColumn} /> },
-      { id: '3', layout: <HourlyTempCard style={styles.cardColumn} /> },
-      { id: '4', layout: <WeatherForecastCard style={styles.cardColumn} /> },
-      { id: '5', layout: <View style={styles.listSpacer} /> },
+      // { id: '2', layout: <WeatherInfoCard style={styles.cardColumn} /> },
+      // { id: '3', layout: <HourlyTempCard style={styles.cardColumn} /> },
+      // { id: '4', layout: <WeatherForecastCard style={styles.cardColumn} /> },
+      // { id: '5', layout: <View style={styles.listSpacer} /> },
     ];
   }
 
@@ -69,7 +69,7 @@ class HomeScreen extends Component {
     const { unit, city, _setUnit } = this.props;
     // console.log(this.props)
     if (unit.value === undefined || unit.value === '') {
-      var newUnit = await new SettingsHelper().getSavedUnit();
+      var newUnit = await SettingsHelper.getSavedUnit();
       _setUnit(newUnit);
     }
 
@@ -120,7 +120,7 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  setUnit: (unit) => dispatch(setUnit(unit)),
+  _setUnit: (unit) => dispatch(setUnit(unit)),
   _setWeatherSummary: (weather) => dispatch(setWeatherSummary(weather)),
   _setWeatherForecast: (forecast) => dispatch(setWeatherForecast(forecast)),
   _setWeatherHourly: (hourly) => dispatch(setWeatherHourly(hourly)),

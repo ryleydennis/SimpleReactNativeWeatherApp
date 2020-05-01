@@ -1,52 +1,34 @@
+import GetData from './APIHelperFunctions';
+
 export default class Weather {
   constructor(weatherData, unit) {
-    this.name = this.getData(weatherData, 'name');
+    this.name = GetData(weatherData, 'name');
 
     this.unit = {};
-    this.unit.abbr = this.getData(unit, 'abbr');
-    this.unit.label = this.getData(unit, 'label');
-    this.unit.value = this.getData(unit, 'value');
+    this.unit.abbr = GetData(unit, 'abbr');
+    this.unit.label = GetData(unit, 'label');
+    this.unit.value = GetData(unit, 'value');
 
-    const weatherArray = this.getData(weatherData, 'weather');
+    const weatherArray = GetData(weatherData, 'weather');
     var weather = weatherArray[0] != null ? weatherData.weather[0] : null;
-    this.id = this.getData(weather, 'id', '-');
-    this.icon = this.getData(weather, 'icon', '-');
-    this.description = this.getData(weather, 'description');
+    this.id = GetData(weather, 'id', '-');
+    this.icon = GetData(weather, 'icon', '-');
+    this.description = GetData(weather, 'description');
 
-    var main = this.getData(weatherData, 'main');
-    this.temp = this.getData(main, 'temp', '-', 0, '°');
-    this.hi = this.getData(main, 'temp_max', '-', 0, '°');
-    this.lo = this.getData(main, 'temp_min', '-', 0, '°');
-    this.humidity = this.getData(main, 'humidity', '-', 0, '%');
-    this.feelsLike = this.getData(main, 'feels_like', '-', 0, '°');
-    this.pressure = this.getData(main, 'pressure', '-', 0, ' hPa');
+    var main = GetData(weatherData, 'main');
+    this.temp = GetData(main, 'temp', '-', '°', 0);
+    this.hi = GetData(main, 'temp_max', '-', '°', 0);
+    this.lo = GetData(main, 'temp_min', '-', '°', 0);
+    this.humidity = GetData(main, 'humidity', '%', '-', 0);
+    this.feelsLike = GetData(main, 'feels_like', '-', '°', 0);
+    this.pressure = GetData(main, 'pressure', '-', 'hPa', 0);
 
-    var wind = this.getData(weatherData, 'wind');
-    this.speed = this.getData(wind, 'speed', '-', 0, ' mph');
+    var wind = GetData(weatherData, 'wind');
+    this.speed = GetData(wind, 'speed', '-', ' mph', 0);
 
-    var sys = this.getData(weatherData, 'sys');
-    this.sunrise = this.getData(sys, 'sunrise');
-    this.sunset = this.getData(sys, 'sunset');
-  }
-
-  static getData(parent, child, placeHolder, decimalPlace, suffix) {
-    var data = '';
-
-    if (parent != null && parent[child] != null) {
-      data = parent[child];
-
-      if (decimalPlace != null) {
-        data = data.toFixed(decimalPlace);
-      }
-    } else {
-      data = placeHolder;
-    }
-
-    if (suffix != null) {
-      data += suffix;
-    }
-
-    return data;
+    var sys = GetData(weatherData, 'sys');
+    this.sunrise = GetData(sys, 'sunrise');
+    this.sunset = GetData(sys, 'sunset');
   }
 
   getIcon() {

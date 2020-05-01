@@ -11,21 +11,7 @@ import FavoritesHelper from '../AsyncStorageHelpers/FavoritesStorageHelper';
 import SettingsHelper from '../AsyncStorageHelpers/SettingsStorageHelper';
 import { setCity } from '../actions';
 
-const favoritesHelper = new FavoritesHelper();
-const settingsHelper = new SettingsHelper();
 class SearchScreen extends Component {
-  static searchCityCallback(data, timeStamp) {
-    const { lastAPICall, timeZone } = this.state;
-    if (lastAPICall < timeStamp) {
-      var filteredData = data.filter((city) => city.timeZone.includes(timeZone));
-      this.setState({
-        cities: data,
-        filteredCities: filteredData,
-        lastAPICall: timeStamp,
-      });
-    }
-  }
-
   constructor(props) {
     super(props);
     this.state = {
@@ -65,13 +51,25 @@ class SearchScreen extends Component {
   // this.state.userInput == 0 ? this.state.favorites : this.state.cities
   getListData() {
     const { userInput, favorites, filterEnabled, filteredCities, cities } = this.state;
-    if (userInput.length === 0) {
+    if (userInput.length === 0 && favorites.length !== 0) {
       return favorites;
     }
     if (filterEnabled) {
       return filteredCities;
     }
     return cities;
+  }
+
+  searchCityCallback(data, timeStamp) {
+    const { lastAPICall, timeZone } = this.state;
+    if (lastAPICall < timeStamp) {
+      var filteredData = data.filter((city) => city.timeZone.includes(timeZone));
+      this.setState({
+        cities: data,
+        filteredCities: filteredData,
+        lastAPICall: timeStamp,
+      });
+    }
   }
 
   updateShadowHeight(offset) {
@@ -101,17 +99,17 @@ class SearchScreen extends Component {
   }
 
   refreshAsyncData() {
-    favoritesHelper.getFavorites().then((favorites) => {
+    FavoritesHelper.getFavorites().then((favorites) => {
       this.setState({
         favorites,
       });
     });
-    settingsHelper.getSavedTimeZone().then((savedTimeZone) => {
+    SettingsHelper.getSavedTimeZone().then((savedTimeZone) => {
       this.setState({
         timeZone: savedTimeZone.label,
       });
     });
-    settingsHelper.getTimeZoneFilter().then((isFilterEnabled) => {
+    SettingsHelper.getTimeZoneFilter().then((isFilterEnabled) => {
       this.setState({
         filterEnabled: isFilterEnabled,
       });
@@ -119,8 +117,9 @@ class SearchScreen extends Component {
   }
 
   cityCard(city) {
-    const { favorites, navigation, _setCity } = this.state;
-    const isFavorite = favoritesHelper.checkFavoritesForCity(favorites, city);
+    const { favorites, navigation } = this.state;
+    const { _setCity } = this.props;
+    const isFavorite = favorites !== undefined ? FavoritesHelper.checkFavoritesForCity(favorites, city) : false;
     const starOpacity = isFavorite ? 1 : 0;
 
     return (
@@ -204,7 +203,7 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  setCity: (city) => dispatch(setCity(city)),
+  _setCity: (city) => dispatch(setCity(city)),
 });
 
 const cityCardStyles = StyleSheet.create({

@@ -8,11 +8,9 @@ import SettingsHelper from '../AsyncStorageHelpers/SettingsStorageHelper';
 import { TextStyle } from '../Styles';
 import DropDown from '../DropDown';
 
-const settingsHelper = new SettingsHelper();
-
 export default class SettingsScreen extends Component {
   static switchFilterSetting(newValue) {
-    settingsHelper.setTimeZoneFilter(newValue).then((result) => {
+    SettingsHelper.setTimeZoneFilter(newValue).then((result) => {
       this.setState({
         filterEnabled: result,
       });
@@ -39,17 +37,17 @@ export default class SettingsScreen extends Component {
   componentDidMount() {
     const { navigation } = this.state;
     this._unsubscribe = navigation.addListener('focus', () => {
-      settingsHelper.getSavedUnit().then((storedUnit) => {
+      SettingsHelper.getSavedUnit().then((storedUnit) => {
         this.setState({
           unit: storedUnit,
         });
       });
-      settingsHelper.getSavedTimeZone().then((storedTimeZone) => {
+      SettingsHelper.getSavedTimeZone().then((storedTimeZone) => {
         this.setState({
           timeZone: storedTimeZone,
         });
       });
-      settingsHelper.getTimeZoneFilter().then((storedIsEnabled) => {
+      SettingsHelper.getTimeZoneFilter().then((storedIsEnabled) => {
         this.setState({
           filterEnabled: storedIsEnabled,
         });
@@ -63,7 +61,7 @@ export default class SettingsScreen extends Component {
 
   getFilteredTimeZones() {
     const { timeZoneSearch } = this.state;
-    return settingsHelper.getTimeZones().filter((zone) => zone.label.includes(timeZoneSearch));
+    return SettingsHelper.getTimeZones().filter((zone) => zone.label.includes(timeZoneSearch));
   }
 
   setupTimeZoneSearch() {
@@ -104,7 +102,7 @@ export default class SettingsScreen extends Component {
   }
 
   updateUnitSelection(unit) {
-    settingsHelper.setSavedUnit(unit).then((storedUnit) => {
+    SettingsHelper.setSavedUnit(unit).then((storedUnit) => {
       this.setState({
         unit: storedUnit,
         unitOptionsVisible: false,
@@ -113,7 +111,7 @@ export default class SettingsScreen extends Component {
   }
 
   updateTimeZoneSelection(timezone) {
-    settingsHelper.setSavedTimeZone(timezone).then((storedZone) => {
+    SettingsHelper.setSavedTimeZone(timezone).then((storedZone) => {
       this.setState({
         timeZone: storedZone,
         timeZoneOptionsVisible: false,
@@ -182,7 +180,7 @@ export default class SettingsScreen extends Component {
             {/* DROPDOWNS FOR BOTH TEMP AND TIMEZONE */}
             <DropDown
               visible={unitOptionsVisible}
-              data={settingsHelper.getAvailableUnits()}
+              data={SettingsHelper.getAvailableUnits()}
               location={unitLocation}
               optionPressed={this.updateUnitSelection}
             />
