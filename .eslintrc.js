@@ -24,5 +24,6 @@ module.exports = {
     "no-underscore-dangle": ["error", { "allowAfterThis": true }],
     "vars-on-top": "off",
     "react/prop-types":"off",
+    "object-curly-newline": ["error", {"ImportDeclaration": "never",}]
   },
 };

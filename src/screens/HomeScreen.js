@@ -1,46 +1,109 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, Image, Text, FlatList, Animated } from 'react-native';
+import { StyleSheet, View, FlatList } from 'react-native';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { LinearGradient } from 'expo-linear-gradient';
-import { connect } from 'react-redux'
+import { connect } from 'react-redux';
 
-import {fetchForecastData, fetchSummaryData, fetchHourlyData} from '../api/FetchWeatherAPI';
-import SampleWeatherAPI from '../api/SampleWeatherAPI';
-import SummaryCard from '../cards/SummaryCard.js';
-import WeatherInfoCard from '../cards/WeatherInfoCard.js';
-import WeatherForecastCard from '../cards/WeatherForecastCard'
-import HourlyTempCard from '../cards/HourlyTempCard.js';
+import { fetchForecastData, fetchSummaryData, fetchHourlyData } from '../api/FetchWeatherAPI';
+import SummaryCard from '../cards/SummaryCard';
+import WeatherInfoCard from '../cards/WeatherInfoCard';
+import WeatherForecastCard from '../cards/WeatherForecastCard';
+import HourlyTempCard from '../cards/HourlyTempCard';
 import SettingsHelper from '../AsyncStorageHelpers/SettingsStorageHelper';
-import { setWeatherSummary, setWeatherForecast, setWeatherHourly, setUnit } from '../actions'
+import { setWeatherSummary, setWeatherForecast, setWeatherHourly, setUnit } from '../actions';
 
 class HomeScreen extends Component {
   constructor(props) {
-    super(props)
+    super(props);
     this.state = {
       refreshingTodaysWeather: true,
       refreshingForecast: true,
       refreshingHourly: true,
     };
 
-    this.fetchSummaryCallback = this.fetchSummaryCallback.bind(this)
-    this.fetchHourlyCallback = this.fetchHourlyCallback.bind(this)
-    this.fetchForecastCallback = this.fetchForecastCallback.bind(this)
-    this.fetchWeatherData()
+    this.fetchSummaryCallback = this.fetchSummaryCallback.bind(this);
+    this.fetchHourlyCallback = this.fetchHourlyCallback.bind(this);
+    this.fetchForecastCallback = this.fetchForecastCallback.bind(this);
+    this.fetchWeatherData();
+  }
+
+  getLayout() {
+    const { refreshingTodaysWeather, refreshingForecast, refreshingHourly } = this.state;
+    if (refreshingTodaysWeather || refreshingForecast || refreshingHourly) {
+      return [{ id: '1', layout: <View /> }];
+    }
+    return [
+      { id: '1', layout: <SummaryCard style={styles.cardColumn} /> },
+      { id: '2', layout: <WeatherInfoCard style={styles.cardColumn} /> },
+      { id: '3', layout: <HourlyTempCard style={styles.cardColumn} /> },
+      { id: '4', layout: <WeatherForecastCard style={styles.cardColumn} /> },
+      { id: '5', layout: <View style={styles.listSpacer} /> },
+    ];
+  }
+
+  fetchSummaryCallback(data) {
+    const { _setWeatherSummary } = this.props;
+    _setWeatherSummary(data);
+    this.setState({
+      refreshingTodaysWeather: false,
+    });
+  }
+
+  fetchHourlyCallback(data) {
+    const { _setWeatherHourly } = this.props;
+    _setWeatherHourly(data);
+    this.setState({
+      refreshingHourly: false,
+    });
+  }
+
+  fetchForecastCallback(data) {
+    const { _setWeatherForecast } = this.props;
+    _setWeatherForecast(data);
+    this.setState({
+      refreshingForecast: false,
+    });
+  }
+
+  async fetchWeatherData() {
+    const { unit, city, _setUnit } = this.props;
+    // console.log(this.props)
+    if (unit.value === undefined || unit.value === '') {
+      var newUnit = await new SettingsHelper().getSavedUnit();
+      _setUnit(newUnit);
+    }
+
+    if (city != null && unit !== undefined) {
+      fetchSummaryData(city, unit, this.fetchSummaryCallback);
+      fetchHourlyData(city, unit, this.fetchHourlyCallback);
+      fetchForecastData(city, unit, this.fetchForecastCallback);
+    } else {
+      console.warn('No valid City or Unit for Homescreen');
+    }
+  }
+
+  refreshScreen() {
+    this.setState({
+      refreshingTodaysWeather: true,
+      refreshingForecast: true,
+      refreshingHourly: true,
+    });
+
+    this.fetchWeatherData();
   }
 
   render() {
+    const { refreshingTodaysWeather, refreshingForecast, refreshingHourly } = this.state;
+
     return (
       <View style={{ flex: 1 }}>
-        <LinearGradient
-          colors={['#FFFBF1', '#FFEDC0']}
-          style={{ flex: 1 }}>
+        <LinearGradient colors={['#FFFBF1', '#FFEDC0']} style={{ flex: 1 }}>
           <View style={styles.listContainer}>
             <FlatList
               data={this.getLayout()}
-              renderItem={({ item }) => (
-                item.layout
-              )}
-              keyExtractor={item => item.id}
-              refreshing={this.state.refreshingTodaysWeather || this.state.refreshingForecast || this.state.refreshingHourly}
+              renderItem={({ item }) => item.layout}
+              keyExtractor={(item) => item.id}
+              refreshing={refreshingTodaysWeather || refreshingForecast || refreshingHourly}
               onRefresh={() => this.refreshScreen()}
               extraData={this.state}
             />
@@ -49,83 +112,19 @@ class HomeScreen extends Component {
       </View>
     );
   }
-
-  refreshScreen() {
-    this.setState({
-      refreshingTodaysWeather: true,
-      refreshingForecast: true,
-      refreshingHourly: true,
-    })
-
-    this.fetchWeatherData()
-  }
-
-  async fetchWeatherData() {
-    // console.log(this.props)
-    if (this.props.unit.value === undefined || this.props.unit.value == '') {
-      var unit = await new SettingsHelper().getSavedUnit()
-      this.props.setUnit(unit)
-    } 
-
-    if (this.props.city != null && this.props.unit != undefined) {
-      fetchSummaryData(this.props.city, this.props.unit, this.fetchSummaryCallback)
-      fetchHourlyData(this.props.city, this.props.unit, this.fetchHourlyCallback)
-      fetchForecastData(this.props.city, this.props.unit, this.fetchForecastCallback)
-    } else {
-      console.warn('OH NOES')
-    }
-  }
-
-  getLayout() {
-    if (this.state.refreshingTodaysWeather || this.state.refreshingForecast || this.state.refreshingHourly) {
-      return [
-        { id: '1', layout: <View /> },
-      ]
-    } else {
-      return [
-        { id: '1', layout: <SummaryCard style={styles.cardColumn} /> },
-        { id: '2', layout: <WeatherInfoCard style={styles.cardColumn} /> },
-        { id: '3', layout: <HourlyTempCard style={styles.cardColumn} /> },
-        { id: '4', layout: <WeatherForecastCard style={styles.cardColumn} /> },
-        { id: '5', layout: <View style={styles.listSpacer} /> }
-      ]
-    }
-  }
-
-  fetchSummaryCallback(data) {
-    this.props.setWeatherSummary(data)
-    this.setState({
-      refreshingTodaysWeather: false,
-    });
-  }
-  
-  fetchHourlyCallback(data) {
-    this.props.setWeatherHourly(data)
-    this.setState({
-      refreshingHourly: false
-    });
-  }
-
-  fetchForecastCallback(data) {
-    this.props.setWeatherForecast(data)
-    this.setState({
-      refreshingForecast: false
-    });
-  }
-
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   city: state.city,
-  unit: state.unit
-})
+  unit: state.unit,
+});
 
-const mapDispatchToProps = dispatch => ({
-  setUnit: unit => dispatch(setUnit(unit)),
-  setWeatherSummary: weather => dispatch(setWeatherSummary(weather)),
-  setWeatherForecast: forecast => dispatch(setWeatherForecast(forecast)),
-  setWeatherHourly: hourly => dispatch(setWeatherHourly(hourly))
-})
+const mapDispatchToProps = (dispatch) => ({
+  setUnit: (unit) => dispatch(setUnit(unit)),
+  _setWeatherSummary: (weather) => dispatch(setWeatherSummary(weather)),
+  _setWeatherForecast: (forecast) => dispatch(setWeatherForecast(forecast)),
+  _setWeatherHourly: (hourly) => dispatch(setWeatherHourly(hourly)),
+});
 
 const styles = StyleSheet.create({
   container: {
@@ -143,12 +142,13 @@ const styles = StyleSheet.create({
     height: 100,
     flexGrow: 1,
     position: 'absolute',
-    left: 0, right: 0,
+    left: 0,
+    right: 0,
     bottom: 0,
   },
   listSpacer: {
-    height: 100
-  }
+    height: 100,
+  },
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(HomeScreen)
+export default connect(mapStateToProps, mapDispatchToProps)(HomeScreen);

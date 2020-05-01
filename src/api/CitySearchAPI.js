@@ -1,7 +1,7 @@
 import CitySearchResults from './CitySearchResults';
 
 export default class CitySearchAPI {
-  static searchCities(cityName, context, callback) {
+  static searchCities(cityName, callback) {
     var timeStamp = Date.now();
     var url = new URL(
       'https://devru-latitude-longitude-find-v1.p.rapidapi.com/latlon.php'
@@ -21,7 +21,7 @@ export default class CitySearchAPI {
         .then((response) => response.json())
         .then((data) => {
           var cityList = new CitySearchResults(data).cities;
-          callback(context, cityList, timeStamp);
+          callback(cityList, timeStamp);
         })
         .catch((err) => {
           console.warn(err);
