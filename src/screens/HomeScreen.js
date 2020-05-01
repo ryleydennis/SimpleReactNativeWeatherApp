@@ -34,10 +34,10 @@ class HomeScreen extends Component {
     }
     return [
       { id: '1', layout: <SummaryCard style={styles.cardColumn} /> },
-      // { id: '2', layout: <WeatherInfoCard style={styles.cardColumn} /> },
-      // { id: '3', layout: <HourlyTempCard style={styles.cardColumn} /> },
-      // { id: '4', layout: <WeatherForecastCard style={styles.cardColumn} /> },
-      // { id: '5', layout: <View style={styles.listSpacer} /> },
+      { id: '2', layout: <WeatherInfoCard style={styles.cardColumn} /> },
+      { id: '3', layout: <HourlyTempCard style={styles.cardColumn} /> },
+      { id: '4', layout: <WeatherForecastCard style={styles.cardColumn} /> },
+      { id: '5', layout: <View style={styles.listSpacer} /> },
     ];
   }
 
@@ -67,16 +67,16 @@ class HomeScreen extends Component {
 
   async fetchWeatherData() {
     const { unit, city, _setUnit } = this.props;
-    // console.log(this.props)
-    if (unit.value === undefined || unit.value === '') {
-      var newUnit = await SettingsHelper.getSavedUnit();
-      _setUnit(newUnit);
+    var currentUnit = unit;
+    if (currentUnit.value === undefined || currentUnit.value === '') {
+      currentUnit = await SettingsHelper.getSavedUnit();
+      _setUnit(currentUnit);
     }
 
-    if (city != null && unit !== undefined) {
-      fetchSummaryData(city, unit, this.fetchSummaryCallback);
-      fetchHourlyData(city, unit, this.fetchHourlyCallback);
-      fetchForecastData(city, unit, this.fetchForecastCallback);
+    if (city != null && currentUnit !== undefined) {
+      fetchSummaryData(city, currentUnit, this.fetchSummaryCallback);
+      fetchHourlyData(city, currentUnit, this.fetchHourlyCallback);
+      fetchForecastData(city, currentUnit, this.fetchForecastCallback);
     } else {
       console.warn('No valid City or Unit for Homescreen');
     }
@@ -122,8 +122,8 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
   _setUnit: (unit) => dispatch(setUnit(unit)),
   _setWeatherSummary: (weather) => dispatch(setWeatherSummary(weather)),
-  _setWeatherForecast: (forecast) => dispatch(setWeatherForecast(forecast)),
   _setWeatherHourly: (hourly) => dispatch(setWeatherHourly(hourly)),
+  _setWeatherForecast: (forecast) => dispatch(setWeatherForecast(forecast)),
 });
 
 const styles = StyleSheet.create({

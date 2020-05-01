@@ -2,11 +2,12 @@ import GetData from './APIHelperFunctions';
 
 export default class Forecast {
   constructor(forecastData) {
+    console.log(forecastData);
     this.days = [];
 
-    for (let i = 0; i < this.days.length; i += 1) {
-      this.days[i] = new DayWeather();
-    }
+    // for (let i = 0; i < this.days.length; i += 1) {
+    //   this.days[i] = new DayWeather();
+    // }
 
     if (forecastData !== undefined) {
       const forecast = Array.isArray(forecastData) ? forecastData[0] : forecastData;
@@ -31,10 +32,10 @@ const DayWeather = (rawDay, index) => {
   this.description = GetData(this._weather, 'description');
   this.icon = GetData(this._weather, 'icon');
 
-  function getIcon() {
+  this.getIcon = () => {
     if (this.icon === '') {
       return '';
     }
     return `https://openweathermap.org/img/wn/${this.icon}@2x.png`;
-  }
+  };
 };

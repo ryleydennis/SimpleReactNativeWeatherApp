@@ -20,14 +20,17 @@ const mapStateToProps = (state) => ({
   weather: state.weatherSummary,
 });
 
-const Row = (left, right, backgroundColor) => (
-  <View backgroundColor={backgroundColor} style={{ borderRadius: 5, padding: 5 }}>
-    <View style={styles.rowView}>
-      <Text style={TextStyle.medium}>{left}</Text>
-      <Text style={TextStyle.medium}>{right}</Text>
+const Row = (props) => {
+  const { left, right, backgroundColor } = props;
+  return (
+    <View backgroundColor={backgroundColor} style={{ borderRadius: 5, padding: 5 }}>
+      <View style={styles.rowView}>
+        <Text style={TextStyle.medium}>{left}</Text>
+        <Text style={TextStyle.medium}>{right}</Text>
+      </View>
     </View>
-  </View>
-);
+  );
+};
 
 const styles = StyleSheet.create({
   infoCard: {

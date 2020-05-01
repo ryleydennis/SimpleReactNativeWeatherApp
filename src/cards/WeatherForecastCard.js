@@ -8,20 +8,23 @@ import Forecast from '../api/Forecast';
 import { ViewStyle, TextStyle } from '../Styles';
 
 const WeatherForecastCard = ({ forecast }) => {
-  // console.log(getMethods(forecast.days[0]))
-  return (
-    <View style={ViewStyle.card}>
-      <View style={styles.card}>
-        <FlatList
-          style={styles.list}
-          data={forecast.days}
-          renderItem={({ item }) => <DaySummary dayWeather={item} />}
-          keyExtractor={(item) => item.index.toString()}
-          horizontal
-        />
+  // console.log(forecast);
+  if (forecast.days !== undefined && forecast.days.length !== 0) {
+    return (
+      <View style={ViewStyle.card}>
+        <View style={styles.card}>
+          <FlatList
+            style={styles.list}
+            data={forecast.days}
+            renderItem={({ item }) => <DaySummary dayWeather={item} />}
+            // keyExtractor={(item) => item.index.toString()}
+            horizontal
+          />
+        </View>
       </View>
-    </View>
-  );
+    );
+  }
+  return <View />;
 };
 
 WeatherForecastCard.propTypes = {
@@ -29,7 +32,7 @@ WeatherForecastCard.propTypes = {
 };
 
 const DaySummary = (dayWeather) => {
-  console.log(getMethods(dayWeather));
+  // console.log(getMethods(dayWeather));
   return (
     <View style={styles.daySummaryView}>
       <Text style={TextStyle.mild}>{getDate(dayWeather.index)}</Text>
@@ -48,9 +51,7 @@ const getMethods = (obj) => {
     Object.getOwnPropertyNames(currentObj).map((item) => properties.add(item));
     // eslint-disable-next-line no-cond-assign
   } while ((currentObj = Object.getPrototypeOf(currentObj)));
-  return [...properties.keys()].filter(
-    (item) => typeof obj[item] === 'function'
-  );
+  return [...properties.keys()].filter((item) => typeof obj[item] === 'function');
 };
 
 const getDate = (index) => {

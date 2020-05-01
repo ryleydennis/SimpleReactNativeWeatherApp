@@ -30,7 +30,7 @@ function getTimeLables(timeStamps) {
     previousDay = timeStamps[0].getDay();
   }
   var times = [];
-  timeStamps.array.forEach((timeStamp) => {
+  timeStamps.forEach((timeStamp) => {
     var time = (timeStamp.getHours() <= 12 ? timeStamp.getHours() : timeStamp.getHours() - 12).toString();
     time += timeStamp.getHours() <= 12 ? 'A' : 'P';
 
@@ -106,7 +106,7 @@ const config = {
       visible: true,
       labelFontSize: 14,
       labelColor: '#494949',
-      labelFormatter: (v) => String(v) + '°',
+      labelFormatter: (v) => `${String(v)}°`,
       marginBottom: 25,
     },
   },
