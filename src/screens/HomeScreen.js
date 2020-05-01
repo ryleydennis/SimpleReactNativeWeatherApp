@@ -19,11 +19,12 @@ class HomeScreen extends Component {
       refreshingTodaysWeather: true,
       refreshingForecast: true,
       refreshingHourly: true,
-      city: props.route.params.city,
-      unit: '',
     };
 
-    this.refreshScreen()
+    this.fetchSummaryCallback = this.fetchSummaryCallback.bind(this)
+    this.fetchHourlyCallback = this.fetchHourlyCallback.bind(this)
+    this.fetchForecastCallback = this.fetchForecastCallback.bind(this)
+    this.fetchWeatherData()
   }
 
   render() {
@@ -49,25 +50,19 @@ class HomeScreen extends Component {
     );
   }
 
-  refreshScreen() {
-    this.setState({
-      refreshingTodaysWeather: true,
-      refreshingForecast: true,
-      refreshingHourly: true,
-    });
-
-      this.fetchWeatherData()
-  }
-
   async fetchWeatherData() {
-    if (this.props.unit.label === undefined) {
+    // console.log(this.props)
+    if (this.props.unit.value === undefined || this.props.unit.value == '') {
       var unit = await new SettingsHelper().getSavedUnit()
       this.props.setUnit(unit)
     } 
-    if (this.state.city != null) {
-      fetchSummaryData(this.props.city, this.props.unit, this.props.setWeatherSummary)
-      fetchForecastData(this.props.city, this.props.units, this.props.setWeatherForecast)
-      fetchHourlyData(this.props.city, this.props.unit, this.props.setWeatherHourly)
+
+    if (this.props.city != null && this.props.unit != undefined) {
+      fetchSummaryData(this.props.city, this.props.unit, this.fetchSummaryCallback)
+      fetchHourlyData(this.props.city, this.props.unit, this.fetchHourlyCallback)
+      fetchForecastData(this.props.city, this.props.unit, this.fetchForecastCallback)
+    } else {
+      console.warn('OH NOES')
     }
   }
 
@@ -80,54 +75,35 @@ class HomeScreen extends Component {
       return [
         { id: '1', layout: <SummaryCard style={styles.cardColumn} /> },
         { id: '2', layout: <WeatherInfoCard style={styles.cardColumn} /> },
-        // { id: '3', layout: <HourlyTempCard style={styles.cardColumn} hourlyData={this.props.weatherHourly} /> },
+        { id: '3', layout: <HourlyTempCard style={styles.cardColumn} /> },
         // { id: '4', layout: <WeatherForecastCard style={styles.cardColumn} forecastData={this.props.weatherForecast} /> },
         // { id: '5', layout: <View style={styles.listSpacer} /> }
       ]
     }
   }
 
-  fetchWeatherCallback(success, context, data) {
-    if (success === true) {
-      //GeoLocation API and OpenWeather don't always agree on the name of coordinates, use GeoLocation name for clarity
-      data.name = context.state.city.name
-      context.setState({
-        refreshingTodaysWeather: false,
-        weatherData: data
-      });
-      context.state.setSummary(data)
-    } else {
-      context.setState({
-        refreshingTodaysWeather: false,
-      });
-    }
+  fetchSummaryCallback(data) {
+    this.props.setWeatherSummary(data)
+    this.setState({
+      refreshingTodaysWeather: false,
+    });
+  }
+  
+  fetchHourlyCallback(data) {
+    this.props.setWeatherHourly(data)
+    console.log(data)
+    this.setState({
+      refreshingHourly: false
+    });
   }
 
-  fetchForecastCallback(success, context, data) {
-    if (success === true) {
-      context.setState({
-        refreshingForecast: false,
-        forecastData: data
-      });
-    } else {
-      context.setState({
-        refreshingForecast: false,
-      });
-    }
+  fetchForecastCallback(data) {
+    this.props.setWeatherForecast(data)
+    this.setState({
+      refreshingForecast: false
+    });
   }
 
-  fetchHourlyCallback(success, context, data) {
-    if (success === true) {
-      context.setState({
-        refreshingHourly: false,
-        hourlyData: data
-      });
-    } else {
-      context.setState({
-        refreshingHourly: false,
-      });
-    }
-  }
 }
 
 const mapStateToProps = state => ({

@@ -3,15 +3,14 @@ import Weather from './Weather';
 import HourlyWeather from './HourlyWeather';
 
 
-function fetchSummaryData(city, units, callback) {
+const fetchSummaryData = (city, unit, callback) => {
     var url = new URL('https://community-open-weather-map.p.rapidapi.com/weather');
     var params = {
         lat: city.lat,
         lon: city.lon,
-        units: units.value,
+        units: unit.value,
     }
     Object.keys(params).forEach(key => url.searchParams.append(key, params[key]))
-
     fetch(url, {
         "method": "GET",
         "headers": {
@@ -21,20 +20,20 @@ function fetchSummaryData(city, units, callback) {
     })
         .then(response => response.json())
         .then(data => {
-            callback(new Weather(data, units))
+            callback(new Weather(data, unit))
         })
         .catch(err => {
-            console.log(err);
+            console.warn(err);
         });
 }
 
-function fetchForecastData(city, units, callback) {
+const fetchForecastData = (city, unit, callback) => {
     const count = 7
     var url = new URL('https://community-open-weather-map.p.rapidapi.com/forecast/daily');
     var params = {
         lat: city.lat,
         lon: city.lon,
-        units: units.value,
+        units: unit.value,
         cnt: count,
     }
     Object.keys(params).forEach(key => url.searchParams.append(key, params[key]))
@@ -51,16 +50,16 @@ function fetchForecastData(city, units, callback) {
             callback(new Forecast(data))
         })
         .catch(err => {
-            console.log(err);
+            console.warn(err);
         });
 }
 
-function fetchHourlyData(city, units) {
+const fetchHourlyData = (city, unit, callback) => {
     var url = new URL('https://community-open-weather-map.p.rapidapi.com/forecast')
     var params = {
         lat: city.lat,
         lon: city.lon,
-        units: units.value,
+        units: unit.value,
 
     }
     Object.keys(params).forEach(key => url.searchParams.append(key, params[key]))
@@ -77,7 +76,7 @@ function fetchHourlyData(city, units) {
             callback(new HourlyWeather(data))
         })
         .catch(err => {
-            console.log(err);
+            console.warn(err);
         });
 }
 

@@ -1,81 +1,72 @@
 import React, { Component } from 'react';
 import { View, StyleSheet, Text, Dimensions } from 'react-native';
 import LineChart from "react-native-responsive-linechart";
+import { connect } from 'react-redux';
+
 import { ViewStyle } from '../Styles';
 
-export default class HourlyTempCard extends Component {
-    constructor(props) {
-        super(props)
-        this.state = {
-            hourlyData: props.hourlyData
-        };
-    };
+const HourlyTempCard = ({ hourlyData }) => {
+    if (hourlyData.timeStamps.length == 0) {
+        return (<View></View>)
+    }
 
-
-    render() {
-        var hourlyData = this.state.hourlyData;
-
-        if (hourlyData.timeStamps.length == 0) {
-            return (<View></View>)
-        }
-        
-        return (
-            <View style={ViewStyle.card}>
-                <View style={styles.hourlyCard}>
-                    <LineChart 
-                        style={{ flex: 1, margin: 10, }} 
-                        config={config} 
-                        data={hourlyData.temps.slice(0,8)} 
-                        xLabels={this.getTimeLables(hourlyData.timeStamps)} />
-                </View>
+    return (
+        <View style={ViewStyle.card}>
+            <View style={styles.hourlyCard}>
+                <LineChart
+                    style={{ flex: 1, margin: 10, }}
+                    config={config}
+                    data={hourlyData.temps.slice(0, 8)}
+                    xLabels={getTimeLables(hourlyData.timeStamps)} />
             </View>
-
-        )
-    }
-
-    
-
-    getTimeLables(timeStamps) {
-        if (timeStamps.length != 0) {
-            var previousDay = timeStamps[0].getDay()
-        }
-        var times = [];
-        for (var timeStamp of timeStamps) {
-            var time = (timeStamp.getHours() <= 12 ? timeStamp.getHours() : timeStamp.getHours() - 12).toString()
-            time += timeStamp.getHours() <= 12 ? 'A' : 'P'
-
-            if (previousDay != timeStamp.getDay()) {
-                previousDay = timeStamp.getDay()
-                time += (' (' + this.getDayText(timeStamp.getDay()) + ')')
-            }
-
-            times.push(time)
-        }
-        return times;
-    }
-
-    getDayText(day) {
-        var correctedDay = day < 7 ? day : day - 7
-
-        switch (correctedDay) {
-            case 0:
-                return 'Su';
-            case 1:
-                return 'M';
-            case 2:
-                return 'Tu';
-            case 3:
-                return 'W';
-            case 4:
-                return 'Th';
-            case 5:
-                return 'F';
-            case 6:
-                return 'Sa';
-        }
-    }
-
+        </View>
+    )
 }
+
+function getTimeLables(timeStamps) {
+    if (timeStamps.length != 0) {
+        var previousDay = timeStamps[0].getDay()
+    }
+    var times = [];
+    for (var timeStamp of timeStamps) {
+        var time = (timeStamp.getHours() <= 12 ? timeStamp.getHours() : timeStamp.getHours() - 12).toString()
+        time += timeStamp.getHours() <= 12 ? 'A' : 'P'
+
+        if (previousDay != timeStamp.getDay()) {
+            previousDay = timeStamp.getDay()
+            time += (' (' + getDayText(timeStamp.getDay()) + ')')
+        }
+
+        times.push(time)
+    }
+    return times;
+}
+
+const mapStateToProps = state => ({
+    hourlyData: state.weatherHourly
+})
+
+function getDayText(day) {
+    var correctedDay = day < 7 ? day : day - 7
+
+    switch (correctedDay) {
+        case 0:
+            return 'Su';
+        case 1:
+            return 'M';
+        case 2:
+            return 'Tu';
+        case 3:
+            return 'W';
+        case 4:
+            return 'Th';
+        case 5:
+            return 'F';
+        case 6:
+            return 'Sa';
+    }
+}
+
 const config = {
     line: {
         visible: true,
@@ -129,3 +120,5 @@ const styles = StyleSheet.create({
     },
 
 })
+
+export default connect(mapStateToProps)(HourlyTempCard)

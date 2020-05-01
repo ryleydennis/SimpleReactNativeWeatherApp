@@ -6,9 +6,9 @@ const unitKey = 'UNIT_KEY';
 const timeZoneKey = 'TIMEZONE_KEY';
 const filterTimeZoneKey = 'FILTER_TIME_ZONE_KEY'
 const availableUnits = [
-    { value: 'Imperial', label: 'Fahrenheit', abbr: 'F'},
-    { value: 'Metric', label: 'Celsius', abbr: 'C'},
-    { value: 'Default', label: 'Kelvin', abbr: 'K' },
+    { value: 'imperial', label: 'Fahrenheit', abbr: 'F'},
+    { value: 'metric', label: 'Celsius', abbr: 'C'},
+    { value: 'default', label: 'Kelvin', abbr: 'K' },
 ]
 
 export default class SettingsHelper {
