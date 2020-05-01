@@ -1,14 +1,15 @@
 import React from 'react';
-import { View, StyleSheet, Text } from 'react-native';
+import { View, StyleSheet, Text, Image } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
+import { GetIcon } from '../api/APIHelperFunctions';
 import Forecast from '../api/Forecast';
 import { ViewStyle, TextStyle } from '../Styles';
 
-const WeatherForecastCard = ({ forecast }) => {
-  // console.log(forecast);
+const WeatherForecastCard = (props) => {
+  const { forecast } = props;
   if (forecast.days !== undefined && forecast.days.length !== 0) {
     return (
       <View style={ViewStyle.card}>
@@ -17,7 +18,7 @@ const WeatherForecastCard = ({ forecast }) => {
             style={styles.list}
             data={forecast.days}
             renderItem={({ item }) => <DaySummary dayWeather={item} />}
-            // keyExtractor={(item) => item.index.toString()}
+            keyExtractor={(item) => item.index.toString()}
             horizontal
           />
         </View>
@@ -31,27 +32,16 @@ WeatherForecastCard.propTypes = {
   forecast: PropTypes.instanceOf(Forecast).isRequired,
 };
 
-const DaySummary = (dayWeather) => {
-  // console.log(getMethods(dayWeather));
+const DaySummary = (props) => {
+  const { dayWeather } = props;
   return (
     <View style={styles.daySummaryView}>
       <Text style={TextStyle.mild}>{getDate(dayWeather.index)}</Text>
-      {/* <Image style={styles.daySummaryImage} source={{ uri: dayWeather.getIcon() }} /> */}
+      <Image style={styles.daySummaryImage} source={{ uri: GetIcon(dayWeather.icon) }} />
       <Text style={TextStyle.mild}>{dayWeather.hi}</Text>
       <Text style={TextStyle.mild}>{dayWeather.lo}</Text>
     </View>
   );
-};
-
-// TEMP METHOD, ERASE
-const getMethods = (obj) => {
-  const properties = new Set();
-  let currentObj = obj;
-  do {
-    Object.getOwnPropertyNames(currentObj).map((item) => properties.add(item));
-    // eslint-disable-next-line no-cond-assign
-  } while ((currentObj = Object.getPrototypeOf(currentObj)));
-  return [...properties.keys()].filter((item) => typeof obj[item] === 'function');
 };
 
 const getDate = (index) => {

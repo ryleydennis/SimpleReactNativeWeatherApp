@@ -1,4 +1,4 @@
-import GetData from './APIHelperFunctions';
+import { GetData } from './APIHelperFunctions';
 
 export default class CitySearchResults {
   constructor(searchResults) {
