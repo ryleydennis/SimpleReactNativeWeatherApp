@@ -1,6 +1,6 @@
 import { SET_CITY, SET_TEMP_UNIT } from '../actions/actionTypes';
 
-const city = (state = {}, action) => {
+const cityState = (state = {}, action) => {
   switch (action.type) {
     case SET_CITY:
       return action.payload;
@@ -9,7 +9,7 @@ const city = (state = {}, action) => {
   }
 };
 
-const unit = (state = { abbr: '' }, action) => {
+const unitState = (state = {}, action) => {
   switch (action.type) {
     case SET_TEMP_UNIT:
       return action.payload;
@@ -18,4 +18,4 @@ const unit = (state = { abbr: '' }, action) => {
   }
 };
 
-export { city, unit };
+export { cityState, unitState };

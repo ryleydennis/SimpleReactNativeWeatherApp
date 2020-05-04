@@ -15,7 +15,7 @@ const SummaryCard = ({ weather, city }) => {
   const [isFavorite, setFavorite] = useState(false);
 
   useEffect(() => {
-    FavoritesHelper.checkIfFavorite(city).then((result) => {
+    favoritesHelper.checkIfFavorite(city).then((result) => {
       setFavorite(result);
     });
   });
@@ -56,7 +56,7 @@ const SummaryCard = ({ weather, city }) => {
 
 const mapStateToProps = (state) => ({
   weather: state.weatherSummary,
-  city: state.city,
+  city: state.cityState,
 });
 
 const styles = StyleSheet.create({

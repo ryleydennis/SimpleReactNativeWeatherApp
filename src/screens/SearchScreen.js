@@ -11,6 +11,8 @@ import FavoritesHelper from '../AsyncStorageHelpers/FavoritesStorageHelper';
 import SettingsHelper from '../AsyncStorageHelpers/SettingsStorageHelper';
 import { setCity } from '../actions';
 
+
+const favoritesHelper = new FavoritesHelper();
 class SearchScreen extends Component {
   constructor(props) {
     super(props);
@@ -29,17 +31,16 @@ class SearchScreen extends Component {
 
     this.searchCityCallback = this.searchCityCallback.bind(this);
     this.refreshAsyncData = this.refreshAsyncData.bind(this);
-    this.refreshAsyncData();
   }
 
   componentDidMount() {
     const { navigation } = this.state;
-    this.setState({
-      cities: [],
-      filteredCities: [],
-      userInput: '',
-    });
     this._unsubscribe = navigation.addListener('focus', () => {
+      this.setState({
+        cities: [],
+        filteredCities: [],
+        userInput: '',
+      });
       this.refreshAsyncData();
     });
   }
@@ -48,7 +49,6 @@ class SearchScreen extends Component {
     this._unsubscribe();
   }
 
-  // this.state.userInput == 0 ? this.state.favorites : this.state.cities
   getListData() {
     const { userInput, favorites, filterEnabled, filteredCities, cities } = this.state;
     if (userInput.length === 0 && favorites.length !== 0) {
@@ -99,7 +99,7 @@ class SearchScreen extends Component {
   }
 
   refreshAsyncData() {
-    FavoritesHelper.getFavorites().then((favorites) => {
+    favoritesHelper.getFavorites().then((favorites) => {
       this.setState({
         favorites,
       });
@@ -119,7 +119,7 @@ class SearchScreen extends Component {
   cityCard(city) {
     const { favorites, navigation } = this.state;
     const { _setCity } = this.props;
-    const isFavorite = favorites !== undefined ? FavoritesHelper.checkFavoritesForCity(favorites, city) : false;
+    const isFavorite = favorites !== undefined ? favoritesHelper.checkFavoritesForCity(favorites, city) : false;
     const starOpacity = isFavorite ? 1 : 0;
 
     return (
@@ -199,7 +199,7 @@ class SearchScreen extends Component {
 }
 
 const mapStateToProps = (state) => ({
-  city: state.city,
+  city: state.cityState,
 });
 
 const mapDispatchToProps = (dispatch) => ({

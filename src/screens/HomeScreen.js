@@ -115,8 +115,8 @@ class HomeScreen extends Component {
 }
 
 const mapStateToProps = (state) => ({
-  city: state.city,
-  unit: state.unit,
+  city: state.cityState,
+  unit: state.unitState,
 });
 
 const mapDispatchToProps = (dispatch) => ({

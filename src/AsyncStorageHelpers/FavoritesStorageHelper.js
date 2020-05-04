@@ -1,12 +1,19 @@
+/* eslint-disable class-methods-use-this */
 import { AsyncStorage } from 'react-native';
 
 const favoritesKey = 'FAVORITES_KEY';
 
 export default class FavoritesHelper {
-  static async getFavorites() {
+  // Uncomment below to reset async storage
+  // constructor() {
+  //   AsyncStorage.clear();
+  // }
+
+  async getFavorites() {
     try {
       const favoritesJSON = await AsyncStorage.getItem(favoritesKey);
       if (favoritesJSON !== null) {
+        // console.log(JSON.parse(favoritesJSON));
         return JSON.parse(favoritesJSON);
       }
       return [];
@@ -16,7 +23,7 @@ export default class FavoritesHelper {
     }
   }
 
-  static async checkIfFavorite(city) {
+  async checkIfFavorite(city) {
     try {
       const favoritesJSON = await AsyncStorage.getItem(favoritesKey);
       if (favoritesJSON !== null) {
@@ -33,15 +40,19 @@ export default class FavoritesHelper {
   setFavorites(isFavorite, city, callback) {
     AsyncStorage.getItem(favoritesKey).then((favoritesJSON) => {
       var favorites = JSON.parse(favoritesJSON);
-      // favorites should always be an empty array
+      // console.log(favorites);
+      // favorites should default to an empty array
       if (favorites === null) {
         favorites = [];
       }
 
-      favorites = isFavorite ? this.addToFavorites(city, favorites) : this.removeFromFavorites(city, favorites);
+      favorites = isFavorite
+        ? this.addToFavorites(city, favorites)
+        : this.removeFromFavorites(city, favorites);
       this.saveFavorites(favorites).then(() => {
         callback(isFavorite);
       });
+
     });
   }
 
@@ -59,67 +70,25 @@ export default class FavoritesHelper {
     return favorites;
   }
 
-  static async saveFavorites(favorites) {
+  async saveFavorites(favorites) {
     try {
       await AsyncStorage.setItem(favoritesKey, JSON.stringify(favorites));
     } catch (error) {
+      console.warn('UH OH');
       // Error saving data
     }
   }
 
-  static checkFavoritesForCity(favorites, city) {
+  checkFavoritesForCity(favorites, city) {
+    if (favorites.length === 0) return false;
     if (favorites !== undefined && favorites.length !== 0) {
       // eslint-disable-next-line consistent-return
-      favorites.forEach((favorite) => {
-        if (favorite.name === city.name) {
+      for (var i = 0; i < favorites.length; i += 1) {
+        if (favorites[i].name === city.name) {
           return true;
         }
-      });
+      }
     }
     return false;
   }
-
-  // async getFavorites() {
-  //     try {
-  //         const value = await AsyncStorage.getItem(favoritesKey);
-  //         if (value !== null) {
-  //             return value
-  //         } else {
-  //             return []
-  //         }
-  //     } catch (error) {
-  //         // Error retrieving data
-  //     }
-  // }
-
-  // async setIsFavorite(isFavorite) {
-  //     var favorites = await this.getFavorites();
-  //     var isCurrentFavorite = favorites.includes(this.state.city)
-
-  //     //If city has been set to favorite and is not currently a favorite, add to favorites
-  //     if (isFavorite && !isCurrentFavorite) {
-  //         favorites.push(this.state.city)
-  //         try {
-  //             await AsyncStorage.setItem(favoritesKey, favorites);
-  //             this.setState({
-  //                 isFavorite: true
-  //             })
-  //         } catch (error) {
-  //             // Error saving data
-  //         }
-  //     }
-  //     //If city has been set to not-favorite and is currently a favorite, remove from favorites
-  //     else if (!isFavorite && isCurrentFavorite) {
-  //         favorites = favorites.filter(city => city.name != this.state.city.name)
-  //         try {
-  //             await AsyncStorage.setItem(favoritesKey, favorites);
-  //             this.setState({
-  //                 isFavorite: false
-  //             })
-  //         } catch (error) {
-  //             // Error saving data
-  //         }
-  //     }
-
-  // }
 }

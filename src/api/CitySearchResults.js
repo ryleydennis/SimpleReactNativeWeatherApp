@@ -2,37 +2,32 @@ import { GetData } from './APIHelperFunctions';
 
 export default class CitySearchResults {
   constructor(searchResults) {
-    var results = new GetData(searchResults, 'Results');
+    var results = GetData(searchResults, 'Results');
 
     this.cities = [];
-    results.foreach((city) => {
-      var name = GetData(city, 'name');
-      var lat = GetData(city, 'lat');
-      var lon = GetData(city, 'lon');
-      var timeZone = GetData(city, 'tzs');
 
-      if (this.verifyName(name) && this.verifyLat(lat) && this.verifyLon(lon)) {
-        this.cities.push({
-          name,
-          lat,
-          lon,
-          timeZone,
-        });
-      }
-    });
+    if (results !== undefined && results.length !== 0) {
+      results.forEach((city) => {
+        var name = GetData(city, 'name');
+        var lat = GetData(city, 'lat');
+        var lon = GetData(city, 'lon');
+        var timeZone = GetData(city, 'tzs');
 
-    this.cities = this.cities.slice(0, 20);
-  }
-
-  static verifyLat(lat) {
-    return !Number.isNaN(lat) && lat >= -90 && lat <= 90;
-  }
-
-  static verifyLon(lon) {
-    return !Number.isNaN(lon) && lon >= -180 && lon <= 180;
-  }
-
-  static verifyName(name) {
-    return name !== '';
+        if (verifyName(name) && verifyLat(lat) && verifyLon(lon)) {
+          this.cities.push({
+            name,
+            lat,
+            lon,
+            timeZone,
+          });
+        }
+      });
+    }
   }
 }
+
+const verifyLat = (lat) => !Number.isNaN(lat) && lat >= -90 && lat <= 90;
+
+const verifyLon = (lon) => !Number.isNaN(lon) && lon >= -180 && lon <= 180;
+
+const verifyName = (name) => name !== '';
