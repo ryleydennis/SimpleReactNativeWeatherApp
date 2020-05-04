@@ -19,7 +19,7 @@ export default class Weather {
     this.temp = GetData(main, 'temp', '-', '°', 0);
     this.hi = GetData(main, 'temp_max', '-', '°', 0);
     this.lo = GetData(main, 'temp_min', '-', '°', 0);
-    this.humidity = GetData(main, 'humidity', '%', '-', 0);
+    this.humidity = GetData(main, 'humidity', '-', '%', 0);
     this.feelsLike = GetData(main, 'feels_like', '-', '°', 0);
     this.pressure = GetData(main, 'pressure', '-', 'hPa', 0);
 
