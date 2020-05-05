@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
 import { GetIcon } from '../api/APIHelperFunctions';
-import Forecast from '../api/Forecast';
+import Forecast from '../model/Forecast';
 import { ViewStyle, TextStyle } from '../Styles';
 
 const WeatherForecastCard = (props) => {

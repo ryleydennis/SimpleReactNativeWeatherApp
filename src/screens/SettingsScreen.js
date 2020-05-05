@@ -121,8 +121,8 @@ export default class SettingsScreen extends Component {
 
   render() {
     const { unit, unitOptionsVisible, unitLocation,
-      timeZoneOptionsVisible, filterEnabled, timeZoneSearch, timeZone,
-      getFilteredTimeZones, timeZoneLocation } = this.state;
+      timeZoneOptionsVisible, filterEnabled, timeZoneSearch,
+      timeZone, timeZoneLocation } = this.state;
     return (
       <TouchableWithoutFeedback
         style={{ width: '100%', height: '100%' }}
@@ -187,7 +187,7 @@ export default class SettingsScreen extends Component {
 
             <DropDown
               visible={timeZoneOptionsVisible}
-              data={getFilteredTimeZones()}
+              data={this.getFilteredTimeZones()}
               location={timeZoneLocation}
               optionPressed={this.updateTimeZoneSelection}
             />

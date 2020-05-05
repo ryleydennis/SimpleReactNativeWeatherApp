@@ -1,4 +1,4 @@
-import { GetData } from './APIHelperFunctions';
+import { GetData } from '../api/APIHelperFunctions';
 
 export default class Weather {
   constructor(weatherData) {

@@ -24,7 +24,8 @@ export default class SettingsHelper {
         return JSON.parse(savedUnitJSON);
       }
       var defaultUnit = availableUnits[0];
-      this.setSavedUnit(defaultUnit).then(() => defaultUnit);
+      await this.setSavedUnit(defaultUnit);
+      return defaultUnit;
     } catch (error) {
       console.log(error);
       return {};
@@ -34,6 +35,7 @@ export default class SettingsHelper {
   static async setSavedUnit(unit) {
     try {
       await AsyncStorage.setItem(unitKey, JSON.stringify(unit));
+      return unit;
     } catch (error) {
       // Error saving data
     }
@@ -50,7 +52,8 @@ export default class SettingsHelper {
         return JSON.parse(savedTimeZoneJSON);
       }
       var defaultZone = this.getTimeZones()[75];
-      this.setSavedTimeZone(defaultZone).then(() => defaultZone);
+      await this.setSavedTimeZone(defaultZone);
+      return defaultZone;
     } catch (error) {
       console.log(error);
       return {};
@@ -60,6 +63,7 @@ export default class SettingsHelper {
   static async setSavedTimeZone(timeZone) {
     try {
       await AsyncStorage.setItem(timeZoneKey, JSON.stringify(timeZone));
+      return timeZone;
     } catch (error) {
       // Error saving data
     }
@@ -72,7 +76,8 @@ export default class SettingsHelper {
         return JSON.parse(filterTimeZones);
       }
       var defaultSetting = false;
-      this.setTimeZoneFilter(defaultSetting).then(() => defaultSetting);
+      await this.setTimeZoneFilter(defaultSetting);
+      return defaultSetting;
     } catch (error) {
       console.log(error);
     }
@@ -81,6 +86,7 @@ export default class SettingsHelper {
   static async setTimeZoneFilter(isFiltered) {
     try {
       await AsyncStorage.setItem(filterTimeZoneKey, JSON.stringify(isFiltered));
+      return isFiltered
     } catch (error) {
       // Error saving data
     }

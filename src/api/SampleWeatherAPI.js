@@ -3,8 +3,8 @@ import weatherForecastSample from '../sampleJSON/WeatherForecastSample';
 import weatherHourlySample from '../sampleJSON/WeatherHourlySample';
 
 import Forecast from './Forecast';
-import Summary from './Weather';
-import Hourly from './HourlyWeather';
+import Summary from '../model/Weather';
+import Hourly from '../model/HourlyWeather';
 
 export default class SampleWeatherAPI {
   static fetchSummarySampleData(callback, context, units) {

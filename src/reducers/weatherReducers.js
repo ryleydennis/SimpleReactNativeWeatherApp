@@ -1,6 +1,6 @@
-import Weather from '../api/Weather';
-import Forecast from '../api/Forecast';
-import Hourly from '../api/HourlyWeather';
+import Weather from '../model/Weather';
+import Forecast from '../model/Forecast';
+import Hourly from '../model/HourlyWeather';
 
 import { SET_WEATHER_SUMMARY, SET_WEATHER_HOURLY, SET_WEATHER_FORECAST } from '../actions/actionTypes';
 

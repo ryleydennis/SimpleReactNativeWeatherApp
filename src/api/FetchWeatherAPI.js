@@ -1,6 +1,6 @@
-import Forecast from './Forecast';
-import Weather from './Weather';
-import HourlyWeather from './HourlyWeather';
+import Forecast from '../model/Forecast';
+import Weather from '../model/Weather';
+import HourlyWeather from '../model/HourlyWeather';
 
 const fetchSummaryData = (city, unit, callback) => {
   var url = new URL(

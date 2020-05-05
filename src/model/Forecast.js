@@ -1,5 +1,5 @@
-import { GetData } from './APIHelperFunctions';
-import DayWeather from './DayWeather';
+import { GetData } from '../api/APIHelperFunctions';
+import DayWeather from '../api/DayWeather';
 
 export default class Forecast {
   constructor(forecastData) {
