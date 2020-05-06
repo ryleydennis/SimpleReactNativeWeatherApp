@@ -1,4 +1,4 @@
-import { GetData } from './APIHelperFunctions';
+import { GetData } from '../api/APIHelperFunctions';
 
 export default class CitySearchResults {
   constructor(searchResults) {
@@ -31,3 +31,5 @@ const verifyLat = (lat) => !Number.isNaN(lat) && lat >= -90 && lat <= 90;
 const verifyLon = (lon) => !Number.isNaN(lon) && lon >= -180 && lon <= 180;
 
 const verifyName = (name) => name !== '';
+
+export { verifyLat, verifyLon, verifyName };

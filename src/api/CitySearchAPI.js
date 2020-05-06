@@ -1,4 +1,4 @@
-import CitySearchResults from './CitySearchResults';
+import CitySearchResults from '../model/CitySearchResults';
 
 export default class CitySearchAPI {
   static searchCities(cityName, callback) {
