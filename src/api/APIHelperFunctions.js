@@ -7,8 +7,6 @@ function GetData(parent, child, placeHolder = '', suffix, decimalPlace) {
     if (decimalPlace != null) {
       data = data.toFixed(decimalPlace);
     }
-  } else {
-    data = '';
   }
 
   if (suffix != null) {
