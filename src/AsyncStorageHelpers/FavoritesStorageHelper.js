@@ -52,7 +52,6 @@ export default class FavoritesHelper {
       this.saveFavorites(favorites).then(() => {
         callback(isFavorite);
       });
-
     });
   }
 

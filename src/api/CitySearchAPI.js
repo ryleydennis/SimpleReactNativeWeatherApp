@@ -4,7 +4,7 @@ export default class CitySearchAPI {
   static searchCities(cityName, callback) {
     var timeStamp = Date.now();
     var url = new URL(
-      'https://devru-latitude-longitude-find-v1.p.rapidapi.com/latlon.php'
+      'https://devru-latitude-longitude-find-v1.p.rapidapi.com/latlon.php',
     );
     var params = { location: cityName };
 
