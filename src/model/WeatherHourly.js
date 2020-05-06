@@ -1,6 +1,6 @@
 import { GetData } from '../api/APIHelperFunctions';
 
-export default class Weather {
+export default class Hourly {
   constructor(weatherData) {
     var list = GetData(weatherData, 'list');
     this.timeStamps = [];

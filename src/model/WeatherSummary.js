@@ -1,6 +1,6 @@
 import { GetData } from '../api/APIHelperFunctions';
 
-export default class Weather {
+export default class Summary {
   constructor(weatherData, unit) {
     this.name = GetData(weatherData, 'name');
 
