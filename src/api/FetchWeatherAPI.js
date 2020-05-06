@@ -31,7 +31,7 @@ const fetchSummaryData = (city, unit, callback) => {
 const fetchForecastData = (city, unit, callback) => {
   const count = 7;
   var url = new URL(
-    'https://community-open-weather-map.p.rapidapi.com/forecast/daily'
+    'https://community-open-weather-map.p.rapidapi.com/forecast/daily',
   );
   var params = {
     lat: city.lat,

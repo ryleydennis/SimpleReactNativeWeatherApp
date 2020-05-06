@@ -86,7 +86,7 @@ export default class SettingsHelper {
   static async setTimeZoneFilter(isFiltered) {
     try {
       await AsyncStorage.setItem(filterTimeZoneKey, JSON.stringify(isFiltered));
-      return isFiltered
+      return isFiltered;
     } catch (error) {
       // Error saving data
     }

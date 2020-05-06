@@ -3,6 +3,7 @@ import { GetData } from '../api/APIHelperFunctions';
 export default class Summary {
   constructor(weatherData, unit) {
     this.name = GetData(weatherData, 'name');
+    this.id = GetData(weatherData, 'id');
 
     this.unit = {};
     this.unit.abbr = GetData(unit, 'abbr');
@@ -11,8 +12,7 @@ export default class Summary {
 
     const weatherArray = GetData(weatherData, 'weather');
     var weather = weatherArray[0] != null ? weatherData.weather[0] : null;
-    this.id = GetData(weather, 'id', '-');
-    this.icon = GetData(weather, 'icon', '-');
+    this.icon = GetData(weather, 'icon', '');
     this.description = GetData(weather, 'description');
 
     var main = GetData(weatherData, 'main');
@@ -29,13 +29,6 @@ export default class Summary {
     var sys = GetData(weatherData, 'sys');
     this.sunrise = GetData(sys, 'sunrise');
     this.sunset = GetData(sys, 'sunset');
-  }
-
-  getIcon() {
-    if (this.icon === '') {
-      return '';
-    }
-    return `https://openweathermap.org/img/wn/${this.icon}@2x.png`;
   }
 
   getSunrise() {

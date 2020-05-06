@@ -1,12 +1,9 @@
 import { GetData } from '../api/APIHelperFunctions';
-import DayWeather from '../api/DayWeather';
+import DayWeather from './DayWeather';
 
 export default class Forecast {
   constructor(forecastData) {
     this.days = [];
-    // for (let i = 0; i < this.days.length; i += 1) {
-    //   this.days[i] = new DayWeather();
-    // }
 
     if (forecastData !== undefined) {
       const forecast = Array.isArray(forecastData) ? forecastData[0] : forecastData;

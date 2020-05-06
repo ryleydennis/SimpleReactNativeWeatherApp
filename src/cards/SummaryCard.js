@@ -4,10 +4,10 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { View, StyleSheet, Text, Image } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { connect } from 'react-redux';
+import FavoritesHelper from '../AsyncStorageHelpers/FavoritesStorageHelper';
 
 import { ViewStyle, TextStyle } from '../Styles';
-
-import FavoritesHelper from '../AsyncStorageHelpers/FavoritesStorageHelper';
+import { GetIcon } from '../api/APIHelperFunctions';
 
 const favoritesHelper = new FavoritesHelper();
 
@@ -45,7 +45,7 @@ const SummaryCard = ({ weather, city }) => {
             <Text style={TextStyle.medium}>{`${weather.hi}↑ · ${weather.lo}↓`}</Text>
           </View>
           <View style={{ alignItems: 'center' }}>
-            <Image style={styles.image} source={{ uri: weather.getIcon() }} />
+            <Image style={styles.image} source={{ uri: GetIcon(weather.icon) }} />
             <Text style={TextStyle.mild}>{weather.description}</Text>
           </View>
         </View>
